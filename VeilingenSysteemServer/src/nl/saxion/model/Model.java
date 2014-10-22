@@ -26,5 +26,7 @@ public class Model {
 		users.add(new User("Rendy Hoog", "rendy", "1234"));
 		users.add(new User("Tom Timmerman", "tim", "planken"));
 		
+		currentAuctions.add(new Auction(0, "Bike", 0, 0, 1415404800));
+		currentAuctions.add(new Auction(0, "Bike", 0, 0, 1415404800));
 	}
 }
