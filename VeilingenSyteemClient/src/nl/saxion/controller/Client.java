@@ -36,7 +36,23 @@ public class Client {
 			ClientReceiveThread crt = new ClientReceiveThread(socket);
 			crt.start();
 			
+			
 			System.out.println("Choose your action:\n1. Make acution\n2. All acution ");
+			int input = s.nextInt();
+			
+			switch (input) {
+			case 1:
+				
+				break;
+			case 2:
+				JSONObject getauctions = new JSONObject();
+				getauctions.put("action", "getauctions");
+				getauctions.put("message", "null");
+				break;
+
+			default:
+				break;
+			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

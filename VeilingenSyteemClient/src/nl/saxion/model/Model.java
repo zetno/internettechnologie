@@ -6,6 +6,7 @@ import java.util.List;
 public class Model {
 	private static Model model;
 	private List<Auction>auctions = new ArrayList<>();
+	private User user;
 	public static Model getInstance(){
 		if(model == null){
 			model = new Model();
@@ -31,8 +32,8 @@ public class Model {
 		return auctions;
 	}
 	
-	public void login(String username, String password){
-		
+	public void setToken(String token){
+		user.setAccesstoken(token);
 	}
 	
 }
