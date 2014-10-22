@@ -53,6 +53,7 @@ public class ClientThread extends Thread {
 
 			switch (action) {
 			case "authorize":
+				System.out.println("authorize");
 				authorize(jsonMessage);
 				break;
 			}
@@ -63,15 +64,18 @@ public class ClientThread extends Thread {
 	}
 
 	private void authorize(JSONObject json) {
-
+		System.out.println("authorizing");
 		try {
+			System.out.println("try");
 			String username = json.getJSONObject("message").getString("username");
 			String password = json.getJSONObject("message").getString("password");
-
+			System.out.println("username: " + username + " password: " + password);
 			if (!username.isEmpty() && !password.isEmpty()) {
+				System.out.println("1token = ");
 				String token = model.authorizeUser(username, password);
-
+				System.out.println("2token = " + token);
 				if (!token.isEmpty()) {
+					System.out.println("sendAccessToken");
 					sendAccessToken(token);
 				} else {
 					sendErrorMessage(204);
@@ -85,6 +89,7 @@ public class ClientThread extends Thread {
 	}
 
 	private void sendAccessToken(String token) throws JSONException {
+		System.out.println("generate json object");
 		JSONObject jsonAccessToken = new JSONObject();
 		jsonAccessToken.put("action", "accesstoken");
 
@@ -92,12 +97,13 @@ public class ClientThread extends Thread {
 		jsonAccessTokenMessage.put("token", token);
 
 		jsonAccessToken.put("message", jsonAccessTokenMessage);
-
+		System.out.println("sendToClient");
 		sendToClient(jsonAccessToken.toString());
 	}
 	
 	private void sendErrorMessage(int statuscode) {
 		try {
+			System.out.println("sendErrorMessage");
 			JSONObject jsonAccessToken = new JSONObject();
 			jsonAccessToken.put("action", "accesstoken");
 
@@ -114,9 +120,11 @@ public class ClientThread extends Thread {
 
 	private void sendToClient(String json) {
 		try {
+			System.out.println("printing to client");
 			OutputStream ops = clientSocket.getOutputStream();
 			PrintWriter p = new PrintWriter(ops, true);
 			p.println(json);
+			System.out.println("authorize send");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
