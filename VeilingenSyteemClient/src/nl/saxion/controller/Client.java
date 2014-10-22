@@ -30,9 +30,6 @@ public class Client {
 		try {
 			Socket socket = new Socket("127.0.0.1", 8081);
 
-			ClientSendThread cit = new ClientSendThread(socket);
-			cit.start();
-
 			ClientReceiveThread crt = new ClientReceiveThread(socket);
 			crt.start();
 			
@@ -48,6 +45,9 @@ public class Client {
 				JSONObject getauctions = new JSONObject();
 				getauctions.put("action", "getauctions");
 				getauctions.put("message", "null");
+				
+				ClientSendThread cit = new ClientSendThread(socket, getauctions.toString());
+				cit.start();
 				break;
 
 			default:

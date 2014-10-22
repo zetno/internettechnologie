@@ -24,6 +24,7 @@ public class ClientReceiveThread extends Thread {
 				String message = "";
 				if (s.hasNext()) {
 					message = s.nextLine();
+					System.out.println(message);
 					parseAction(message);
 				}
 			} catch (IOException e) {

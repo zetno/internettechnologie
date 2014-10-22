@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import nl.saxion.model.Model;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +31,7 @@ public class ClientThread extends Thread {
 				if (s.hasNext()) {
 					String message = s.nextLine();
 
+					System.out.println("incoming message: " + message);
 					try {
 						parseAction(message);
 					} catch (JSONException e) {
@@ -45,7 +47,7 @@ public class ClientThread extends Thread {
 	}
 
 	private void parseAction(String json) throws JSONException {
-		if (!json.isEmpty()) {
+		if (!json.isEmpty() && isJSONValid(json)) {
 			JSONObject jsonMessage = new JSONObject(json);
 			String action = jsonMessage.getString("action");
 
@@ -119,5 +121,18 @@ public class ClientThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isJSONValid(String test) {
+	    try {
+	        new JSONObject(test);
+	    } catch (JSONException ex) {
+	        try {
+	            new JSONArray(test);
+	        } catch (JSONException ex1) {
+	            return false;
+	        }
+	    }
+	    return true;
 	}
 }

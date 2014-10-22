@@ -9,28 +9,25 @@ import java.util.Scanner;
 
 public class ClientSendThread extends Thread{
 	private Socket socket;
-	private String nickname;
+	private String json;
 	
-	public ClientSendThread(Socket socket){
+	public ClientSendThread(Socket socket, String json){
 		this.socket = socket;
-		this.nickname = "derp";
+		this.json = json;
 	}
 	
 	@Override
 	public void run(){
-		while(true){
-			Scanner sc = new Scanner(System.in);
-			String message = sc.nextLine();
+		Scanner sc = new Scanner(System.in);
+		
+		try {
+			OutputStream ops = socket.getOutputStream();
+			PrintWriter p = new PrintWriter(ops,true);
 			
-			try {
-				OutputStream ops = socket.getOutputStream();
-				PrintWriter p = new PrintWriter(ops,true);
-				
-				p.println(nickname + ": " + message);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			p.println(json);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
