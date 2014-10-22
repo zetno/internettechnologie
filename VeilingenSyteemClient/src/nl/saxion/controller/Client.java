@@ -33,6 +33,10 @@ public class Client {
 			ClientReceiveThread crt = new ClientReceiveThread(socket);
 			crt.start();
 			
+			ClientSendThread citAuthorize = new ClientSendThread(socket, authorize.toString());
+			citAuthorize.start();
+			
+			//TODO: wait till token is received
 			
 			System.out.println("Choose your action:\n1. Make acution\n2. All acution ");
 			int input = s.nextInt();
@@ -46,8 +50,8 @@ public class Client {
 				getauctions.put("action", "getauctions");
 				getauctions.put("message", "null");
 				
-				ClientSendThread cit = new ClientSendThread(socket, getauctions.toString());
-				cit.start();
+				ClientSendThread citGetAuctions = new ClientSendThread(socket, getauctions.toString());
+				citGetAuctions.start();
 				break;
 
 			default:
