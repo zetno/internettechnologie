@@ -48,41 +48,72 @@ public class ClientThread extends Thread {
 		if (!json.isEmpty()) {
 			JSONObject jsonMessage = new JSONObject(json);
 			String action = jsonMessage.getString("action");
-			
+
 			switch (action) {
 			case "authorize":
 				authorize(jsonMessage);
 				break;
 			}
-			
+
+		}else{
+			sendErrorMessage(400);
 		}
 	}
-	
-	private void authorize(JSONObject json) throws JSONException{
-		String username = json.getJSONObject("message").getString("username");
-		String password = json.getJSONObject("message").getString("password");
-		
-		String token = model.authorizeUser(username, password);
-		
-		sendAccessToken(token);
+
+	private void authorize(JSONObject json) {
+
+		try {
+			String username = json.getJSONObject("message").getString("username");
+			String password = json.getJSONObject("message").getString("password");
+
+			if (!username.isEmpty() && !password.isEmpty()) {
+				String token = model.authorizeUser(username, password);
+
+				if (!token.isEmpty()) {
+					sendAccessToken(token);
+				} else {
+					sendErrorMessage(204);
+				}
+			} else {
+				sendErrorMessage(400);
+			}
+		} catch (JSONException e) {
+			sendErrorMessage(400);
+		}
 	}
-	
-	private void sendAccessToken(String token) throws JSONException{
+
+	private void sendAccessToken(String token) throws JSONException {
 		JSONObject jsonAccessToken = new JSONObject();
 		jsonAccessToken.put("action", "accesstoken");
-		
+
 		JSONObject jsonAccessTokenMessage = new JSONObject();
 		jsonAccessTokenMessage.put("token", token);
-		
+
 		jsonAccessToken.put("message", jsonAccessTokenMessage);
-		
+
 		sendToClient(jsonAccessToken.toString());
 	}
 	
-	private void sendToClient(String json){
+	private void sendErrorMessage(int statuscode) {
+		try {
+			JSONObject jsonAccessToken = new JSONObject();
+			jsonAccessToken.put("action", "accesstoken");
+
+			JSONObject jsonAccessTokenMessage = new JSONObject();
+			jsonAccessTokenMessage.put("statuscode", statuscode);
+
+			jsonAccessToken.put("message", jsonAccessTokenMessage);
+
+			sendToClient(jsonAccessToken.toString());
+		} catch (JSONException e) {
+			System.out.println("internal server error: SendErrorMessage");
+		}
+	}
+
+	private void sendToClient(String json) {
 		try {
 			OutputStream ops = clientSocket.getOutputStream();
-			PrintWriter p = new PrintWriter(ops,true);
+			PrintWriter p = new PrintWriter(ops, true);
 			p.println(json);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

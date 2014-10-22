@@ -19,7 +19,7 @@ public class Model {
 		loadDummyData();
 	}
 	
-	private List<Socket> clientSockets = new ArrayList<Socket>();
+	
 	private List<Auction> currentAuctions = new ArrayList<Auction>();
 	private List<User> users = new ArrayList<User>();
 	
@@ -63,7 +63,4 @@ public class Model {
 		return token;
 	}
 	
-	public List<Socket> getClientSockets(){
-		return clientSockets;
-	}
 }
