@@ -1,27 +1,29 @@
 package nl.saxion.model;
 
 public class User {
-	private String name, username, password;
+	private String accesstoken, username, password;
 
 	/**
 	 * Make a user
 	 * 
-	 * @param name
-	 *            name of user
+	 * @param accesstoken
+	 *            accesstoken of user
 	 * @param username
 	 *            unique username
 	 * @param password
 	 *            password
 	 */
-	public User(String name, String username, String password) {
-		super();
-		this.name = name;
+	public User(String username, String password) {
 		this.username = username;
 		this.password = password;
 	}
 
-	public String getName() {
-		return name;
+	public void setAccesstoken(String accesstoken){
+		this.accesstoken = accesstoken;
+	}
+	
+	public String getAccesstoken() {
+		return accesstoken;
 	}
 
 	public String getUsername() {
@@ -33,7 +35,7 @@ public class User {
 	}
 	
 	public String toString(){
-		return "User: "+name + " with usename "+ username;
+		return "accesstoken: "+accesstoken + " with usename "+ username;
 	}
 
 }

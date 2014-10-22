@@ -6,40 +6,35 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import nl.saxion.model.Model;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ClientThread extends Thread {
 	private Socket clientSocket;
-	
+	private Model model;
+
 	public ClientThread(Socket clientSocket) {
 		this.clientSocket = clientSocket;
+		this.model = Model.getInstance();
 		System.out.println("A new connection with a client has been made!");
 	}
-	
-	public void run(){
+
+	public void run() {
 		while (true) {
 			try {
-				//read incoming message
+				// read incoming message
 				Scanner s = new Scanner(clientSocket.getInputStream());
-				
-				if(s.hasNext()){
-					String message  = s.nextLine();
-					
+
+				if (s.hasNext()) {
+					String message = s.nextLine();
+
 					try {
-						parseJson(message);
+						parseAction(message);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-	
-					//send incoming message to other clients
-					for (Socket socket : Server.getInstance().getClientSockets()) {
-						if(!socket.equals(clientSocket)){
-							OutputStream ops = socket.getOutputStream();
-							PrintWriter p = new PrintWriter(ops,true);
-							p.println(message);
-						}
 					}
 				}
 			} catch (IOException e) {
@@ -48,11 +43,50 @@ public class ClientThread extends Thread {
 			}
 		}
 	}
-	
-	private void parseJson(String json) throws JSONException{
-		if(!json.isEmpty()){
+
+	private void parseAction(String json) throws JSONException {
+		if (!json.isEmpty()) {
 			JSONObject jsonMessage = new JSONObject(json);
-			jsonMessage.getString("action");
+			String action = jsonMessage.getString("action");
+			
+			switch (action) {
+			case "authorize":
+				authorize(jsonMessage);
+				break;
+			}
+			
+		}
+	}
+	
+	private void authorize(JSONObject json) throws JSONException{
+		String username = json.getJSONObject("message").getString("username");
+		String password = json.getJSONObject("message").getString("password");
+		
+		String token = model.authorizeUser(username, password);
+		
+		sendAccessToken(token);
+	}
+	
+	private void sendAccessToken(String token) throws JSONException{
+		JSONObject jsonAccessToken = new JSONObject();
+		jsonAccessToken.put("action", "accesstoken");
+		
+		JSONObject jsonAccessTokenMessage = new JSONObject();
+		jsonAccessTokenMessage.put("token", token);
+		
+		jsonAccessToken.put("message", jsonAccessTokenMessage);
+		
+		sendToClient(jsonAccessToken.toString());
+	}
+	
+	private void sendToClient(String json){
+		try {
+			OutputStream ops = clientSocket.getOutputStream();
+			PrintWriter p = new PrintWriter(ops,true);
+			p.println(json);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

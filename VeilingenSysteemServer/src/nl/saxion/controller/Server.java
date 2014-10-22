@@ -6,25 +6,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.saxion.model.Model;
+
 public class Server {
-	private static Server server;
+	private static Model model;
 
 	private Server(){
-		clientSockets = new ArrayList<Socket>();
-	}
-	
-	public static Server getInstance(){
-		if(server == null){
-			server = new Server();
-		}
-		
-		return server;
-	}
-	
-	private List<Socket> clientSockets;
-	
-	public List<Socket> getClientSockets(){
-		return clientSockets;
+		model = model.getInstance();
 	}
 	
 	public static void main(String[] args) {
@@ -37,7 +25,7 @@ public class Server {
 				Socket clientSocket = serverSocket.accept();
 				System.out.println("Server has accepted a new client!");
 				
-				Server.getInstance().getClientSockets().add(clientSocket);
+				model.getClientSockets().add(clientSocket);
 
 				ClientThread ct = new ClientThread(clientSocket);
 				ct.start();
