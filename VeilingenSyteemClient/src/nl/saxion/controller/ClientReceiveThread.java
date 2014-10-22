@@ -41,6 +41,7 @@ public class ClientReceiveThread extends Thread {
 				String action = jsonMessage.getString("action");
 				if (action.equals("accesstoken")) {
 					String token = jsonMessage.getJSONObject("message").getString("token");
+					System.out.println(token);
 					Model.getInstance().setToken(token);
 				}
 			} catch (JSONException e) {

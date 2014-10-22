@@ -12,7 +12,6 @@ INDEX VERSION 1.127+D:\Informatica\Jaar 2\New\Jaar 2 - kwartiel 1\Internet Techn
 391184027.index
 3449308155.index
 319281900.index
-660689425.index
 1008433849.index
 2119896769.index
 1994229570.index
