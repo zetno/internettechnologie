@@ -12,7 +12,7 @@ import nl.saxion.model.Message;
 
 public class ClientThreadHandler {
 
-	public static Message messageToAction(Socket socket) throws JSONException, IOException{
+	public static Message messageToAction(Socket socket) throws JSONException, IOException, BadInputException{
 		Scanner s = new Scanner(socket.getInputStream());
 		
 		if (s.hasNext()) {
@@ -23,7 +23,7 @@ public class ClientThreadHandler {
 		return null;
 	}
 	
-	private static Message parseJson(String json) throws JSONException {
+	private static Message parseJson(String json) throws JSONException, BadInputException {
 		if (!json.isEmpty() && isJSONValid(json)) {
 			JSONObject jsonMessage = new JSONObject(json);
 			String action = jsonMessage.getString("action");
@@ -31,10 +31,8 @@ public class ClientThreadHandler {
 			
 			return new Message(action, content);
 		}else{
-			//TODO: throw new exception BAD MESSAGE RECEIVED
+			throw new BadInputException();
 		}
-		
-		return null;
 	}
 	
 	private static boolean isJSONValid(String test) {

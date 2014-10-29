@@ -32,16 +32,18 @@ public class ClientThread extends Thread {
 				switch (message.getAction()) {
 					case "authorize": authorize(message.getMessage()); break;
 				}
+			} catch (BadInputException bie){
+				sendErrorMessage(200);
 			} catch (JSONException e) {
-				//TODO: Make custom exception handlers
+				sendErrorMessage(201);
 			} catch (IOException e) {
-				//TODO: Make custom exception handlers
+				sendErrorMessage(200);
 			}
 		}
 	}
 
 	
-	private void authorize(JSONObject json) {
+	private void authorize(JSONObject json) throws BadInputException {
 		try {
 			String username = json.getString("username");
 			String password = json.getString("password");
@@ -51,13 +53,13 @@ public class ClientThread extends Thread {
 				if (!token.isEmpty()) {
 					sendAccessToken(token);
 				} else {
-					//TODO: THROW EXCEPTION WRONG USERNAME OR PASSWORD
+					throw new BadInputException();
 				}
 			} else {
-				//TODO: THROW EXCEPTION WRONG USERNAME OR PASSWORD
+				throw new BadInputException();
 			}
 		} catch (JSONException e) {
-			//TODO: THROW EXCEPTION WRONG USERNAME OR PASSWORD
+			throw new BadInputException();
 		}
 	}
 
