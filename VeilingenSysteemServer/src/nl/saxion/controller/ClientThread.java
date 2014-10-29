@@ -31,6 +31,7 @@ public class ClientThread extends Thread {
 				
 				switch (message.getAction()) {
 					case "authorize": authorize(message.getMessage()); break;
+					case "postnewbid": createAuction(message.getMessage()); break;
 				}
 			} catch (BadInputException bie){
 				sendErrorMessage(200);
@@ -62,6 +63,26 @@ public class ClientThread extends Thread {
 			throw new BadInputException();
 		}
 	}
+	
+	private void createAuction(JSONObject json){
+		/*try {
+			String username = json.getString("username");
+			String password = json.getString("password");
+			if (!username.isEmpty() && !password.isEmpty()) {
+				String token = model.authorizeUser(username, password);
+
+				if (!token.isEmpty()) {
+					sendAccessToken(token);
+				} else {
+					throw new BadInputException();
+				}
+			} else {
+				throw new BadInputException();
+			}
+		} catch (JSONException e) {
+			throw new BadInputException();
+		}*/
+	}
 
 	private void sendAccessToken(String token) throws JSONException {
 		JSONObject jsonAccessToken = new JSONObject();
@@ -78,15 +99,15 @@ public class ClientThread extends Thread {
 	private void sendErrorMessage(int statuscode) {
 		try {
 			System.out.println("sendErrorMessage");
-			JSONObject jsonAccessToken = new JSONObject();
-			jsonAccessToken.put("action", "accesstoken");
+			JSONObject jsonErrorMessage = new JSONObject();
+			jsonErrorMessage.put("action", "response");
 
-			JSONObject jsonAccessTokenMessage = new JSONObject();
-			jsonAccessTokenMessage.put("statuscode", statuscode);
+			JSONObject jsonErrorMessageMessage = new JSONObject();
+			jsonErrorMessageMessage.put("statuscode", statuscode);
 
-			jsonAccessToken.put("message", jsonAccessTokenMessage);
+			jsonErrorMessage.put("message", jsonErrorMessageMessage);
 
-			sendToClient(jsonAccessToken.toString());
+			sendToClient(jsonErrorMessage.toString());
 		} catch (JSONException e) {
 			System.out.println("internal server error: SendErrorMessage");
 		}
