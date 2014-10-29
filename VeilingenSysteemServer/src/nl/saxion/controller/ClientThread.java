@@ -38,50 +38,43 @@ public class ClientThread extends Thread {
 			} catch (JSONException e) {
 				sendErrorMessage(201);
 			} catch (IOException e) {
-				sendErrorMessage(200);
+				sendErrorMessage(201);
+			} catch (ForbiddenException e) {
+				sendErrorMessage(202);
 			}
 		}
 	}
 
 	
-	private void authorize(JSONObject json) throws BadInputException {
-		try {
-			String username = json.getString("username");
-			String password = json.getString("password");
-			if (!username.isEmpty() && !password.isEmpty()) {
-				String token = model.authorizeUser(username, password);
-
-				if (!token.isEmpty()) {
-					sendAccessToken(token);
-				} else {
-					throw new BadInputException();
-				}
+	private void authorize(JSONObject json) throws BadInputException, JSONException {
+		String username = json.getString("username");
+		String password = json.getString("password");
+		if (!username.isEmpty() && !password.isEmpty()) {
+			String token = model.authorizeUser(username, password);
+			
+			if (!token.isEmpty() && token != "") {
+				sendAccessToken(token);
 			} else {
 				throw new BadInputException();
 			}
-		} catch (JSONException e) {
+		} else {
 			throw new BadInputException();
 		}
 	}
 	
-	private void createAuction(JSONObject json){
-		/*try {
-			String username = json.getString("username");
-			String password = json.getString("password");
-			if (!username.isEmpty() && !password.isEmpty()) {
-				String token = model.authorizeUser(username, password);
-
-				if (!token.isEmpty()) {
-					sendAccessToken(token);
-				} else {
-					throw new BadInputException();
-				}
-			} else {
+	private void createAuction(JSONObject json) throws BadInputException, ForbiddenException, JSONException{
+		String token = json.getString("accesstoken");
+		String item = json.getString("itemname");
+		double minBid = json.getDouble("minimumbid");
+		if (!token.isEmpty()) {
+			if(!item.isEmpty() && !Double.isNaN(minBid) && minBid > 0){
+				
+			}else{
 				throw new BadInputException();
 			}
-		} catch (JSONException e) {
-			throw new BadInputException();
-		}*/
+		} else {
+			throw new ForbiddenException();
+		}
 	}
 
 	private void sendAccessToken(String token) throws JSONException {
@@ -103,7 +96,7 @@ public class ClientThread extends Thread {
 			jsonErrorMessage.put("action", "response");
 
 			JSONObject jsonErrorMessageMessage = new JSONObject();
-			jsonErrorMessageMessage.put("statuscode", statuscode);
+			jsonErrorMessageMessage.put("status_code", statuscode);
 
 			jsonErrorMessage.put("message", jsonErrorMessageMessage);
 
