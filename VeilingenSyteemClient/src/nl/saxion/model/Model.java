@@ -35,5 +35,7 @@ public class Model {
 	public void setToken(String token){
 		user.setAccesstoken(token);
 	}
-	
+	public String getToken(){
+		return user.getAccesstoken();
+	} 
 }

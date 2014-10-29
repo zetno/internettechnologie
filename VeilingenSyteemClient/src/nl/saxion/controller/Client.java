@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import nl.saxion.model.Model;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,25 +35,40 @@ public class Client {
 			ClientReceiveThread crt = new ClientReceiveThread(socket);
 			crt.start();
 			
-			ClientSendThread citAuthorize = new ClientSendThread(socket, authorize.toString());
-			citAuthorize.start();
-			
-			//TODO: wait till token is received
 			
 			System.out.println("Choose your action:\n1. Make acution\n2. All acution ");
 			int input = s.nextInt();
 			
 			switch (input) {
 			case 1:
+				JSONObject makeAuction = new JSONObject();
+				makeAuction.put("action", "postnewbid");
 				
+				System.out.println("What do you want to offer?");
+				String ding = s.nextLine();
+				
+				System.out.println("What is minimun price?");
+				double price = s.nextDouble();
+				
+				JSONObject makeMsg = new JSONObject();
+				makeMsg.put("accesstoken", Model.getInstance().getToken());
+				makeMsg.put("itemname", ding);
+				makeMsg.put("mininumbid", price);
+				
+				makeAuction.put("message", makeMsg);
+				
+				ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());
+				citMakeAuction.start();
 				break;
 			case 2:
+				
 				JSONObject getauctions = new JSONObject();
 				getauctions.put("action", "getauctions");
 				getauctions.put("message", "null");
 				
-				ClientSendThread citGetAuctions = new ClientSendThread(socket, getauctions.toString());
-				citGetAuctions.start();
+				
+				ClientSendThread citGetAuction = new ClientSendThread(socket, getauctions.toString());
+				citGetAuction.start();
 				break;
 
 			default:

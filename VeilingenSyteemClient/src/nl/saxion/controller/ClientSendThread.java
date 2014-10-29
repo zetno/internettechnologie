@@ -18,16 +18,19 @@ public class ClientSendThread extends Thread{
 	
 	@Override
 	public void run(){
-		Scanner sc = new Scanner(System.in);
-		
-		try {
-			OutputStream ops = socket.getOutputStream();
-			PrintWriter p = new PrintWriter(ops,true);
+		while(true){
+			Scanner sc = new Scanner(System.in);
 			
-			p.println(json);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			try {
+				OutputStream ops = socket.getOutputStream();
+				PrintWriter p = new PrintWriter(ops,true);
+				
+				p.println(json);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }
