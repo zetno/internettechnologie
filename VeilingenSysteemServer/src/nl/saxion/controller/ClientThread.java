@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import nl.saxion.model.Message;
 import nl.saxion.model.Model;
 
 import org.json.JSONArray;
@@ -23,73 +24,44 @@ public class ClientThread extends Thread {
 	}
 
 	public void run() {
+		//wait for incoming message
 		while (true) {
 			try {
-				// read incoming message
-				Scanner s = new Scanner(clientSocket.getInputStream());
-
-				if (s.hasNext()) {
-					String message = s.nextLine();
-
-					System.out.println("incoming message: " + message);
-					try {
-						parseAction(message);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				Message message = ClientThreadHandler.messageToAction(clientSocket);
+				
+				switch (message.getAction()) {
+					case "authorize": authorize(message.getMessage()); break;
 				}
+			} catch (JSONException e) {
+				//TODO: Make custom exception handlers
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//TODO: Make custom exception handlers
 			}
 		}
 	}
 
-	private void parseAction(String json) throws JSONException {
-		if (!json.isEmpty() && isJSONValid(json)) {
-			JSONObject jsonMessage = new JSONObject(json);
-			String action = jsonMessage.getString("action");
-
-			switch (action) {
-			case "authorize":
-				System.out.println("authorize");
-				authorize(jsonMessage);
-				break;
-			}
-
-		}else{
-			sendErrorMessage(400);
-		}
-	}
-
+	
 	private void authorize(JSONObject json) {
-		System.out.println("authorizing");
 		try {
-			System.out.println("try");
-			String username = json.getJSONObject("message").getString("username");
-			String password = json.getJSONObject("message").getString("password");
-			System.out.println("username: " + username + " password: " + password);
+			String username = json.getString("username");
+			String password = json.getString("password");
 			if (!username.isEmpty() && !password.isEmpty()) {
-				System.out.println("1token = ");
 				String token = model.authorizeUser(username, password);
-				System.out.println("2token = " + token);
+
 				if (!token.isEmpty()) {
-					System.out.println("sendAccessToken");
 					sendAccessToken(token);
 				} else {
-					sendErrorMessage(204);
+					//TODO: THROW EXCEPTION WRONG USERNAME OR PASSWORD
 				}
 			} else {
-				sendErrorMessage(400);
+				//TODO: THROW EXCEPTION WRONG USERNAME OR PASSWORD
 			}
 		} catch (JSONException e) {
-			sendErrorMessage(400);
+			//TODO: THROW EXCEPTION WRONG USERNAME OR PASSWORD
 		}
 	}
 
 	private void sendAccessToken(String token) throws JSONException {
-		System.out.println("generate json object");
 		JSONObject jsonAccessToken = new JSONObject();
 		jsonAccessToken.put("action", "accesstoken");
 
@@ -97,7 +69,7 @@ public class ClientThread extends Thread {
 		jsonAccessTokenMessage.put("token", token);
 
 		jsonAccessToken.put("message", jsonAccessTokenMessage);
-		System.out.println("sendToClient");
+
 		sendToClient(jsonAccessToken.toString());
 	}
 	
@@ -120,27 +92,14 @@ public class ClientThread extends Thread {
 
 	private void sendToClient(String json) {
 		try {
-			System.out.println("printing to client");
 			OutputStream ops = clientSocket.getOutputStream();
 			PrintWriter p = new PrintWriter(ops, true);
 			p.println(json);
-			System.out.println("authorize send");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public boolean isJSONValid(String test) {
-	    try {
-	        new JSONObject(test);
-	    } catch (JSONException ex) {
-	        try {
-	            new JSONArray(test);
-	        } catch (JSONException ex1) {
-	            return false;
-	        }
-	    }
-	    return true;
-	}
+	
 }

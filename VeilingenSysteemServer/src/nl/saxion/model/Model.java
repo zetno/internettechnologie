@@ -40,28 +40,26 @@ public class Model {
 				user.setAccesstoken(token);
 			}
 		}
-
 		return token;
 	}
 
 	public String generateAccessToken() {
 		String token = "";
-		boolean newToken = true;
-		
-		while (true) {
-			token = Integer.toString((int) (Math.random() * 1000000));
+
+		Boolean check = true;
+
+		do {
+			token = Integer.toString((int) (Math.floor((Math.random() * 100000000))));
+			check = false;
 
 			for (User user : users) {
 				if (token.equals(user.getAccesstoken())) {
-					newToken = false;
+					check = true;	
 				}
 			}
-			
-			if(newToken == true){
-				break;
-			}
-		}
+		} while (check);
 
+		
 		return token;
 	}
 
