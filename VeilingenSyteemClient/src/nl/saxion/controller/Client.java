@@ -36,7 +36,7 @@ public class Client {
 			crt.start();
 			
 			
-			System.out.println("Choose your action:\n1. Make acution\n2. All acution\n3. Bid ");
+			System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid ");
 			int input = s.nextInt();
 			
 			switch (input) {
