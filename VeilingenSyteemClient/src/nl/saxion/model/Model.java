@@ -28,6 +28,8 @@ public class Model {
 		return null;
 	}
 	
+	
+	
 	public List<Auction>getAllAuction(){
 		return auctions;
 	}

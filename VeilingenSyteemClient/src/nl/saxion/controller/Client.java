@@ -36,7 +36,7 @@ public class Client {
 			crt.start();
 			
 			
-			System.out.println("Choose your action:\n1. Make acution\n2. All acution ");
+			System.out.println("Choose your action:\n1. Make acution\n2. All acution\n3. Bid ");
 			int input = s.nextInt();
 			
 			switch (input) {
@@ -45,14 +45,14 @@ public class Client {
 				makeAuction.put("action", "postnewbid");
 				
 				System.out.println("What do you want to offer?");
-				String ding = s.nextLine();
+				String thing = s.nextLine();
 				
-				System.out.println("What is minimun price?");
+				System.out.println("What is the minimun price?");
 				double price = s.nextDouble();
 				
 				JSONObject makeMsg = new JSONObject();
 				makeMsg.put("accesstoken", Model.getInstance().getToken());
-				makeMsg.put("itemname", ding);
+				makeMsg.put("itemname", thing);
 				makeMsg.put("mininumbid", price);
 				
 				makeAuction.put("message", makeMsg);
@@ -70,7 +70,27 @@ public class Client {
 				ClientSendThread citGetAuction = new ClientSendThread(socket, getauctions.toString());
 				citGetAuction.start();
 				break;
-
+				
+			case 3:
+				JSONObject postBid = new JSONObject();
+				postBid.put("action", "postbid");
+				
+				System.out.println("Which case(Enter auction Id)?");
+				String nameOfThing = s.nextLine();
+				System.out.println("Which price?");
+				double priceOfThing = s.nextDouble();
+				
+				JSONObject bidMsg = new JSONObject();
+				bidMsg.put("accesstoken", Model.getInstance().getToken());
+				bidMsg.put("bid",priceOfThing);
+				bidMsg.put("auctionsID",nameOfThing);
+				
+				postBid.put("message", bidMsg);
+				
+				ClientSendThread citPostBid = new ClientSendThread(socket, postBid.toString());
+				citPostBid.start();
+				
+				
 			default:
 				break;
 			}
