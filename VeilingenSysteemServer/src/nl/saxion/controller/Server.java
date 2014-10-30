@@ -45,6 +45,7 @@ public class Server {
 				ClientThread ct = new ClientThread(clientSocket);
 				ct.start();
 			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

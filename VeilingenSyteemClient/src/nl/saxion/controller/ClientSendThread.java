@@ -18,7 +18,7 @@ public class ClientSendThread extends Thread{
 	
 	@Override
 	public void run(){
-		
+
 			Scanner sc = new Scanner(System.in);
 			
 			

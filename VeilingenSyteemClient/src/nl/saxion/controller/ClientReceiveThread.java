@@ -50,8 +50,7 @@ public class ClientReceiveThread extends Thread {
 					Model.getInstance().userLoggedIn(username, password, token);
 
 				} else if (action.equals("response")) {
-					int response = Integer.parseInt(jsonMessage.getJSONObject(
-							"message").getString("status_code"));
+					int response = Integer.parseInt(jsonMessage.getJSONObject("message").getString("status_code"));
 					if (response == 100) {
 						System.out.println("You are logged in as user");
 					} else if (response == 200) {
