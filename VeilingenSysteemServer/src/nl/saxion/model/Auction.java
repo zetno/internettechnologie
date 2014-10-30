@@ -3,8 +3,8 @@ package nl.saxion.model;
 public class Auction {
 	private int id;
 	private String name;
-	private int minPrice;
-	private int highestBid;
+	private double minPrice;
+	private double highestBid;
 	private int endTime; //in epoch
 	
 	/**
@@ -13,13 +13,13 @@ public class Auction {
 	 * @param minPrice
 	 * @param highestBid
 	 */
-	public Auction(int id, String name, int highestBid, int endTime) {
+	public Auction(int id, String name, double highestBid, int endTime) {
 		this.id = id;
 		this.name = name;
 		this.highestBid = highestBid;
 	}
 	
-	public Auction(int id, String name, int minPrice, int highestBid, int endTime) {
+	public Auction(int id, String name, double minPrice, double highestBid, int endTime) {
 		this.id = id;
 		this.name = name;
 		this.minPrice = minPrice;
@@ -34,15 +34,15 @@ public class Auction {
 		return name;
 	}
 	
-	public int getMinPrice() {
+	public double getMinPrice() {
 		return minPrice;
 	}
 	
-	public int getHighestBid() {
+	public double getHighestBid() {
 		return highestBid;
 	}
 	
-	public void setHighestBid(int highestBid) {
+	public void setHighestBid(double highestBid) {
 		this.highestBid = highestBid;
 	}
 	

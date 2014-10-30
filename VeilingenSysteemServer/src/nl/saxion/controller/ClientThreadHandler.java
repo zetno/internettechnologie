@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import nl.saxion.controller.exceptions.BadInputException;
 import nl.saxion.model.Message;
 
 public class ClientThreadHandler {

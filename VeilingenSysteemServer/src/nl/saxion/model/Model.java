@@ -3,6 +3,8 @@ package nl.saxion.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.saxion.controller.exceptions.AllreadyExistsException;
+
 public class Model {
 	private static Model model;
 
@@ -19,6 +21,8 @@ public class Model {
 	}
 
 	private List<Auction> currentAuctions = new ArrayList<Auction>();
+	private int uniqueIdCounter = 1;
+	
 	private List<User> users = new ArrayList<User>();
 
 	private void loadDummyData() {
@@ -62,10 +66,19 @@ public class Model {
 		return token;
 	}
 	
-	public void addAuction(int id, String name, int minPrice, int highestBid, int endTime) {
+	public void addAuction(String name, double minBid, int endTime) throws AllreadyExistsException {
 		//Check if the auction allready excists
-	/*	for (Auction auction : auctions) {
-			
-		}*/
+		for (Auction auction : currentAuctions) {
+			if(auction.getName().equals(name)){
+				throw new AllreadyExistsException();
+			}
+		}
+		
+		//add auction
+		currentAuctions.add(new Auction( generateUniqueAuctionId(), name, minBid, endTime));
+	}
+	
+	public int generateUniqueAuctionId(){
+		return uniqueIdCounter++;
 	}
 }

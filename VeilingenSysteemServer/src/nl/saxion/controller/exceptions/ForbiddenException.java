@@ -1,4 +1,4 @@
-package nl.saxion.controller;
+package nl.saxion.controller.exceptions;
 
 public class ForbiddenException extends Exception
 {

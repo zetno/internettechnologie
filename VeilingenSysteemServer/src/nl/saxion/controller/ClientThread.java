@@ -6,6 +6,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import nl.saxion.controller.exceptions.AllreadyExistsException;
+import nl.saxion.controller.exceptions.BadInputException;
+import nl.saxion.controller.exceptions.ForbiddenException;
 import nl.saxion.model.Message;
 import nl.saxion.model.Model;
 
@@ -44,6 +47,8 @@ public class ClientThread extends Thread {
 				sendResponseMessage(201);
 			} catch (ForbiddenException e) {
 				sendResponseMessage(202);
+			} catch (AllreadyExistsException e) {
+				
 			}
 		}
 	}
@@ -65,13 +70,16 @@ public class ClientThread extends Thread {
 		}
 	}
 	
-	private void createAuction(JSONObject json) throws BadInputException, ForbiddenException, JSONException{
+	private void createAuction(JSONObject json) throws BadInputException, ForbiddenException, JSONException, AllreadyExistsException{
 		String token = json.getString("accesstoken");
-		String item = json.getString("itemname");
+		String name = json.getString("itemname");
+		int endDate = json.getInt("enddate");
 		double minBid = json.getDouble("minimumbid");
+		
 		if (!token.isEmpty()) {
-			if(!item.isEmpty() && !Double.isNaN(minBid) && minBid > 0){
-				//TODO: add auction in model
+			if(!name.isEmpty() && !Double.isNaN(minBid) && minBid >= 0 && endDate > 0){
+				model.addAuction(name, minBid, endDate);
+				sendResponseMessage(200);
 			}else{
 				throw new BadInputException();
 			}
