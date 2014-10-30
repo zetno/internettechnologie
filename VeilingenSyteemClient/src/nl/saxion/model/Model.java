@@ -59,7 +59,7 @@ public class Model {
 		this.password = password;
 	}
 	public boolean hasToken(){
-		if (null != user && user.getAccesstoken() != null && !user.getAccesstoken().equals("")){
+		if (user!=null && user.getAccesstoken() != null && !user.getAccesstoken().equals("")){
 			return true;
 		}
 		return false;

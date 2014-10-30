@@ -43,7 +43,7 @@ public class Client {
 			cstAuthorize.start();
 			boolean hasToken = Model.getInstance().hasToken();
 			int input = 0;
-			while (input != 4 && hasToken) {
+			while (input != 4 && !hasToken) {
 				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
 				input = s.nextInt();
 				switch (input) {
