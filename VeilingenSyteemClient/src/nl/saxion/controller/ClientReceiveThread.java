@@ -16,13 +16,19 @@ public class ClientReceiveThread extends Thread {
 
 	public ClientReceiveThread(Socket socket) {
 		this.socket = socket;
+		System.out.println("ClientReceiveThread is created.");
 	}
 
+	
+	
 	@Override
 	public void run() {
+		System.out.println("run started");
 		while (true) {
 			try {
+				System.out.println("while started");
 				Scanner s = new Scanner(socket.getInputStream());
+				System.out.println("Scanner? "+s.hasNext());
 				String message = "";
 				if (s.hasNext()) {
 					message = s.nextLine();
@@ -42,18 +48,19 @@ public class ClientReceiveThread extends Thread {
 				jsonMessage = new JSONObject(json);
 
 				String action = jsonMessage.getString("action");
+				
 				if (action.equals("accesstoken")) {
 					String token = jsonMessage.getJSONObject("message").getString("token");
 					System.out.println(token);
 					Model.getInstance().setToken(token);
 					
 				}else if (action.equals("response")) {
-					String response = jsonMessage.getJSONObject("message").getString("response");
-					if (response.equals("100")) {
+					int response = Integer.parseInt(jsonMessage.getJSONObject("message").getString("status_code"));
+					if (response == 100) {
 						System.out.println("You are logged in as user");
-					}else if (response.equals("200")) {
+					}else if (response == 200) {
 						System.out.println("Wrong username or password.");
-					}else if(response.equals("202")){
+					}else if(response == 202){
 						System.out.println("First log in");
 					}
 					

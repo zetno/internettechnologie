@@ -31,7 +31,6 @@ public class Client {
 		authorize.put("message", msg);
 		try {
 			Socket socket = new Socket("127.0.0.1", 8081);
-
 			ClientReceiveThread crt = new ClientReceiveThread(socket);
 			crt.start();
 			
@@ -56,7 +55,7 @@ public class Client {
 				makeMsg.put("mininumbid", price);
 				
 				makeAuction.put("message", makeMsg);
-				
+				System.out.println(makeAuction.toString());
 				ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());
 				citMakeAuction.start();
 				break;
