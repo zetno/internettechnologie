@@ -30,11 +30,13 @@ public class Client {
 		
 		authorize.put("message", msg);
 		try {
-			Socket socket = new Socket("127.0.0.1", 8081);
+			Socket socket = new Socket("localhost", 8081);
 
 			ClientReceiveThread crt = new ClientReceiveThread(socket);
 			crt.start();
 			
+			ClientSendThread cstAuthorize = new ClientSendThread(socket, authorize.toString());
+			cstAuthorize.start();
 			
 			System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid ");
 			int input = s.nextInt();
