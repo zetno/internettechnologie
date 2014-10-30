@@ -9,6 +9,7 @@ import java.util.Scanner;
 import nl.saxion.controller.exceptions.AllreadyExistsException;
 import nl.saxion.controller.exceptions.BadInputException;
 import nl.saxion.controller.exceptions.ForbiddenException;
+import nl.saxion.model.Auction;
 import nl.saxion.model.Message;
 import nl.saxion.model.Model;
 
@@ -48,7 +49,7 @@ public class ClientThread extends Thread {
 			} catch (ForbiddenException e) {
 				sendResponseMessage(202);
 			} catch (AllreadyExistsException e) {
-				
+				sendResponseMessage(204);
 			}
 		}
 	}
@@ -88,8 +89,22 @@ public class ClientThread extends Thread {
 		}
 	}
 
-	private void sendCurrentAuctions(){
-		//TODO
+	private void sendCurrentAuctions() throws JSONException{
+		JSONObject jsonMessage = new JSONObject();
+		jsonMessage.put("action", "postauctions");
+		
+		JSONArray jsonAuctions = new JSONArray();
+		for (Auction auction : model.getCurrentAuctions()) {
+			JSONObject jsonAuction = new JSONObject();
+			jsonAuction.put("auctionid", auction.getId());
+			jsonAuction.put("name", auction.getName());	
+			jsonAuction.put("endtime", auction.getEndTime());	
+			jsonAuction.put("highestbid", auction.getHighestBid());	
+			jsonAuctions.put(jsonAuction);
+		}
+		jsonMessage.put("message", jsonAuctions);
+		
+		sendToClient(jsonMessage.toString());
 	}
 	
 	private void sendAccessToken(String token) throws JSONException {
@@ -127,8 +142,7 @@ public class ClientThread extends Thread {
 			PrintWriter p = new PrintWriter(ops, true);
 			p.println(json);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("internal server error: SendErrorMessage");
 		}
 	}
 	
