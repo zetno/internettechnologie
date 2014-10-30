@@ -34,7 +34,7 @@ public class Server {
 		ServerSocket serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(8081);
-
+			
 			while (true) {
 				System.out.println("Server is waiting for client...");
 				Socket clientSocket = serverSocket.accept();

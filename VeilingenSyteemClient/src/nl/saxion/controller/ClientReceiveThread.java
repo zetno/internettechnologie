@@ -1,6 +1,8 @@
 package nl.saxion.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -19,22 +21,17 @@ public class ClientReceiveThread extends Thread {
 		System.out.println("ClientReceiveThread is created.");
 	}
 
-	
-	
 	@Override
 	public void run() {
 		System.out.println("run started");
 		while (true) {
 			try {
-				System.out.println("while started");
-				Scanner s = new Scanner(socket.getInputStream());
-				System.out.println("Scanner? "+s.hasNext());
-				String message = "";
-				if (s.hasNext()) {
-					message = s.nextLine();
-					System.out.println(message);
-					parseAction(message);
-				}
+
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
+				String message = in.readLine();
+				parseAction(message);
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -48,44 +45,46 @@ public class ClientReceiveThread extends Thread {
 				jsonMessage = new JSONObject(json);
 
 				String action = jsonMessage.getString("action");
-				
+
 				if (action.equals("accesstoken")) {
-					String token = jsonMessage.getJSONObject("message").getString("token");
+					String token = jsonMessage.getJSONObject("message")
+							.getString("token");
 					System.out.println(token);
 					Model.getInstance().setToken(token);
-					
-				}else if (action.equals("response")) {
-					int response = Integer.parseInt(jsonMessage.getJSONObject("message").getString("status_code"));
+
+				} else if (action.equals("response")) {
+					int response = Integer.parseInt(jsonMessage.getJSONObject(
+							"message").getString("status_code"));
 					if (response == 100) {
 						System.out.println("You are logged in as user");
-					}else if (response == 200) {
+					} else if (response == 200) {
 						System.out.println("Wrong username or password.");
-					}else if(response == 202){
+					} else if (response == 202) {
 						System.out.println("First log in");
 					}
-					
-				}	
-				else if(action.equals("postauctions")){
-//					
-					JSONArray messageContent = (JSONArray) jsonMessage.get("message");
-			       
+
+				} else if (action.equals("postauctions")) {
+					//
+					JSONArray messageContent = (JSONArray) jsonMessage
+							.get("message");
+
 					for (int i = 0; i < messageContent.length(); i++) {
-						String auctionid = messageContent.getJSONObject(i).getString("auctionid");
+						String auctionid = messageContent.getJSONObject(i)
+								.getString("auctionid");
 						System.out.println(auctionid);
-						String name = messageContent.getJSONObject(i).getString("name");
+						String name = messageContent.getJSONObject(i)
+								.getString("name");
 						System.out.println(name);
-						String endtime = messageContent.getJSONObject(i).getString("endtime");
+						String endtime = messageContent.getJSONObject(i)
+								.getString("endtime");
 						System.out.println(endtime);
-						String highestbid = messageContent.getJSONObject(i).getString("highestbid");
-						System.out.println(highestbid+"\n------------");
+						String highestbid = messageContent.getJSONObject(i)
+								.getString("highestbid");
+						System.out.println(highestbid + "\n------------");
 					}
-			          
-				}		
-					
-					
-				
-				
-				
+
+				}
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
