@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Iterator;
-import java.util.Scanner;
 
 import nl.saxion.model.Model;
 
@@ -18,12 +16,10 @@ public class ClientReceiveThread extends Thread {
 
 	public ClientReceiveThread(Socket socket) {
 		this.socket = socket;
-		System.out.println("ClientReceiveThread is created.");
 	}
 
 	@Override
 	public void run() {
-		System.out.println("run started");
 		while (true) {
 			try {
 
@@ -47,10 +43,11 @@ public class ClientReceiveThread extends Thread {
 				String action = jsonMessage.getString("action");
 
 				if (action.equals("accesstoken")) {
-					String token = jsonMessage.getJSONObject("message")
-							.getString("token");
+					String token = jsonMessage.getJSONObject("message").getString("token");
 					System.out.println(token);
-					Model.getInstance().setToken(token);
+					String username = Model.getInstance().getUsername();
+					String password = Model.getInstance().getPassword();
+					Model.getInstance().userLoggedIn(username, password, token);
 
 				} else if (action.equals("response")) {
 					int response = Integer.parseInt(jsonMessage.getJSONObject(

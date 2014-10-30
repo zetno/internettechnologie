@@ -28,7 +28,7 @@ public class ClientThread extends Thread {
 		while (true) {
 			try {
 				Message message = ClientThreadHandler.messageToAction(clientSocket);
-				
+				System.out.println(message.getAction());
 				switch (message.getAction()) {
 					case "authorize": authorize(message.getMessage()); break;
 					case "postnewbid": createAuction(message.getMessage()); break;

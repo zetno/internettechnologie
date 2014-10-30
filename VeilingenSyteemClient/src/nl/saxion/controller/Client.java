@@ -3,7 +3,9 @@ package nl.saxion.controller;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.Date;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import nl.saxion.model.Model;
 
@@ -16,9 +18,9 @@ public class Client {
 		Scanner s = new Scanner(System.in);
 		String username = "";
 		String password = "";
-		System.out.println("Type in your username");
+		System.out.println("Type in your username:");
 		username = s.nextLine();
-		System.out.println("Type in your password");
+		System.out.println("Type in your password:");
 		password = s.nextLine();
 		
 		JSONObject authorize = new JSONObject();
@@ -29,11 +31,19 @@ public class Client {
 		msg.put("password", password);
 		
 		authorize.put("message", msg);
+		Model.getInstance().setUsername(username);
+		Model.getInstance().setPassword(password);
 		try {
-			Socket socket = new Socket("127.0.0.1", 8081);
+
+
+			Socket socket = new Socket("localhost", 8081);
+
+
 			ClientReceiveThread crt = new ClientReceiveThread(socket);
 			crt.start();
 			
+			ClientSendThread cstAuthorize = new ClientSendThread(socket, authorize.toString());
+			cstAuthorize.start();
 			
 			System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid ");
 			int input = s.nextInt();
@@ -49,11 +59,17 @@ public class Client {
 				System.out.println("What is the minimun price?");
 				double price = s.nextDouble();
 				
+				System.out.println("How many hours do you want action to last?");
+				long time = s.nextInt();
+				
+				Date date = new Date(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(time));
+				
+				
 				JSONObject makeMsg = new JSONObject();
 				makeMsg.put("accesstoken", Model.getInstance().getToken());
 				makeMsg.put("itemname", thing);
 				makeMsg.put("mininumbid", price);
-				
+				makeMsg.put("enddate", time);
 				makeAuction.put("message", makeMsg);
 				System.out.println(makeAuction.toString());
 				ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());

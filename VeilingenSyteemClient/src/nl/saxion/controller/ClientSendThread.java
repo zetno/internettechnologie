@@ -18,7 +18,7 @@ public class ClientSendThread extends Thread{
 	
 	@Override
 	public void run(){
-		while(true){
+		
 			Scanner sc = new Scanner(System.in);
 			
 			
@@ -31,6 +31,6 @@ public class ClientSendThread extends Thread{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		
 	}
 }

@@ -7,6 +7,8 @@ public class Model {
 	private static Model model;
 	private List<Auction>auctions = new ArrayList<>();
 	private User user;
+	private String username;
+	private String password;
 	public static Model getInstance(){
 		if(model == null){
 			model = new Model();
@@ -40,4 +42,22 @@ public class Model {
 	public String getToken(){
 		return user.getAccesstoken();
 	} 
+	
+	public void userLoggedIn(String username, String password, String accesstoken){
+		User user = new User(username, password);
+		user.setAccesstoken(accesstoken);
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
 }
