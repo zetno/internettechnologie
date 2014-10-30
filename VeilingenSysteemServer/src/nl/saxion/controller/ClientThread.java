@@ -79,7 +79,7 @@ public class ClientThread extends Thread {
 		if (!token.isEmpty()) {
 			if(!name.isEmpty() && !Double.isNaN(minBid) && minBid >= 0 && endDate > 0){
 				model.addAuction(name, minBid, endDate);
-				sendResponseMessage(200);
+				sendResponseMessage(100);
 			}else{
 				throw new BadInputException();
 			}
