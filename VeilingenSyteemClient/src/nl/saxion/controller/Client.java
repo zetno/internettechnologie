@@ -41,10 +41,11 @@ public class Client {
 			ClientSendThread cstAuthorize = new ClientSendThread(socket,
 					authorize.toString());
 			cstAuthorize.start();
-
-			System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
-			int input = s.nextInt();
-			while (input != 4) {
+			boolean hasToken = Model.getInstance().hasToken();
+			int input = 0;
+			while (input != 4 && hasToken) {
+				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
+				input = s.nextInt();
 				switch (input) {
 				case 1:
 					JSONObject makeAuction = new JSONObject();
@@ -54,8 +55,7 @@ public class Client {
 					String thing = s.next();
 					System.out.println("What is the minimun price?");
 					double price = s.nextDouble();
-					System.out
-							.println("How many hours do you want action to last?");
+					System.out.println("How many hours do you want action to last?");
 					long time = s.nextInt();
 
 					Date date = new Date(System.currentTimeMillis()
@@ -67,10 +67,10 @@ public class Client {
 					makeMsg.put("mininumbid", price);
 					makeMsg.put("enddate", time);
 					makeAuction.put("message", makeMsg);
-					System.out.println(makeAuction.toString());
-					ClientSendThread citMakeAuction = new ClientSendThread(
-							socket, makeAuction.toString());
+					
+					ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());
 					citMakeAuction.start();
+					System.out.println("Done.");
 					break;
 				case 2:
 

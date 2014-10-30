@@ -9,6 +9,7 @@ public class Model {
 	private User user;
 	private String username;
 	private String password;
+	private String token;
 	public static Model getInstance(){
 		if(model == null){
 			model = new Model();
@@ -42,7 +43,7 @@ public class Model {
 	} 
 	
 	public void userLoggedIn(String username, String password, String accesstoken){
-		User user = new User(username, password);
+		user = new User(username, password);
 		user.setAccesstoken(accesstoken);
 	}
 	public String getUsername() {
@@ -57,5 +58,10 @@ public class Model {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+	public boolean hasToken(){
+		if (null != user && user.getAccesstoken() != null && !user.getAccesstoken().equals("")){
+			return true;
+		}
+		return false;
+	}
 }

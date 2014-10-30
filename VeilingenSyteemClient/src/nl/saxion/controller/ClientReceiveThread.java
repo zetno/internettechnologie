@@ -47,7 +47,7 @@ public class ClientReceiveThread extends Thread {
 					String username = Model.getInstance().getUsername();
 					String password = Model.getInstance().getPassword();
 					Model.getInstance().userLoggedIn(username, password, token);
-
+					
 				} else if (action.equals("response")) {
 					int response = jsonMessage.getJSONObject("message").getInt("status_code");
 					if (response == 100) {
@@ -56,6 +56,8 @@ public class ClientReceiveThread extends Thread {
 						System.out.println("Wrong username or password.");
 					} else if (response == 202) {
 						System.out.println("First log in");
+					}else if (response == 204) {
+						System.out.println("Auction had already made.");
 					}
 
 				} else if (action.equals("postauctions")) {
