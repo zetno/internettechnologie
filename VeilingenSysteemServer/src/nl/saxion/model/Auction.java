@@ -3,14 +3,13 @@ package nl.saxion.model;
 public class Auction {
 	private int id;
 	private String name;
-	private double minPrice;
 	private double highestBid;
+	private double minPrice;
 	private int endTime; //in epoch
 	
 	/**
 	 * @param id
 	 * @param name
-	 * @param minPrice
 	 * @param highestBid
 	 */
 	public Auction(int id, String name, double highestBid, int endTime) {
@@ -22,7 +21,6 @@ public class Auction {
 	public Auction(int id, String name, double minPrice, double highestBid, int endTime) {
 		this.id = id;
 		this.name = name;
-		this.minPrice = minPrice;
 		this.highestBid = highestBid;
 	}
 	

@@ -31,7 +31,7 @@ public class Model {
 		users.add(new User("tim", "planken"));
 
 		currentAuctions.add(new Auction(1, "Bike", 0, 0, 1415404800));
-		currentAuctions.add(new Auction(2, "Bike", 0, 0, 1415404800));
+		currentAuctions.add(new Auction(2, "Car", 0, 0, 1415404800));
 	}
 
 	public String authorizeUser(String username, String password) {
@@ -62,12 +62,11 @@ public class Model {
 			}
 		} while (check);
 
-		
 		return token;
 	}
 	
 	public void addAuction(String name, double minBid, int endTime) throws AllreadyExistsException {
-		//Check if the auction allready excists
+		//Check if the auction allready exists
 		for (Auction auction : currentAuctions) {
 			if(auction.getName().equals(name)){
 				throw new AllreadyExistsException();
@@ -80,5 +79,9 @@ public class Model {
 	
 	public int generateUniqueAuctionId(){
 		return uniqueIdCounter++;
+	}
+	
+	public List<Auction> getCurrentAuctions(){
+		return currentAuctions;
 	}
 }
