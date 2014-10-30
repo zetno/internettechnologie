@@ -1,6 +1,8 @@
 package nl.saxion.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -22,13 +24,9 @@ public class ClientReceiveThread extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				Scanner s = new Scanner(socket.getInputStream());
-				String message = "";
-				if (s.hasNext()) {
-					message = s.nextLine();
-					System.out.println(message);
-					parseAction(message);
-				}
+				BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
+				String message = in.readLine();
+				parseAction(message);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

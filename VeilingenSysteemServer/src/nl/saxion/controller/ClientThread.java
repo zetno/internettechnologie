@@ -34,13 +34,13 @@ public class ClientThread extends Thread {
 					case "postnewbid": createAuction(message.getMessage()); break;
 				}
 			} catch (BadInputException bie){
-				sendErrorMessage(200);
+				sendResponseMessage(200);
 			} catch (JSONException e) {
-				sendErrorMessage(201);
+				sendResponseMessage(201);
 			} catch (IOException e) {
-				sendErrorMessage(201);
+				sendResponseMessage(201);
 			} catch (ForbiddenException e) {
-				sendErrorMessage(202);
+				sendResponseMessage(202);
 			}
 		}
 	}
@@ -87,20 +87,21 @@ public class ClientThread extends Thread {
 		jsonAccessToken.put("message", jsonAccessTokenMessage);
 
 		sendToClient(jsonAccessToken.toString());
+		System.out.println("A new accesstoken has been logged: " + token);
 	}
 	
-	private void sendErrorMessage(int statuscode) {
+	private void sendResponseMessage(int statuscode) {
 		try {
-			System.out.println("sendErrorMessage");
 			JSONObject jsonErrorMessage = new JSONObject();
 			jsonErrorMessage.put("action", "response");
 
 			JSONObject jsonErrorMessageMessage = new JSONObject();
 			jsonErrorMessageMessage.put("status_code", statuscode);
 
-			jsonErrorMessage.put("message", jsonErrorMessageMessage);
+			jsonErrorMessage.put("Message with statuscode " + Integer.toString(statuscode) + " is send", jsonErrorMessageMessage);
 
 			sendToClient(jsonErrorMessage.toString());
+			System.out.println("Erorr ");
 		} catch (JSONException e) {
 			System.out.println("internal server error: SendErrorMessage");
 		}

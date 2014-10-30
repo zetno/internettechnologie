@@ -1,6 +1,8 @@
 package nl.saxion.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -13,14 +15,9 @@ import nl.saxion.model.Message;
 public class ClientThreadHandler {
 
 	public static Message messageToAction(Socket socket) throws JSONException, IOException, BadInputException{
-		Scanner s = new Scanner(socket.getInputStream());
-		
-		if (s.hasNext()) {
-			String content = s.nextLine();
-			return parseJson(content);
-		}
-		
-		return null;
+		BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
+		String content = in.readLine();
+		return parseJson(content);
 	}
 	
 	private static Message parseJson(String json) throws JSONException, BadInputException {
@@ -28,7 +25,7 @@ public class ClientThreadHandler {
 			JSONObject jsonMessage = new JSONObject(json);
 			String action = jsonMessage.getString("action");
 			JSONObject content = jsonMessage.getJSONObject("message");
-			
+			System.out.println(action + ": json:" + content.toString());
 			return new Message(action, content);
 		}else{
 			throw new BadInputException();
