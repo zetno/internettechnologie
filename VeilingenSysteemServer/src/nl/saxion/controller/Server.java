@@ -1,13 +1,10 @@
 package nl.saxion.controller;
 
 import java.io.IOException;
-import java.io.ObjectInputStream.GetField;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-
-import nl.saxion.model.Model;
 
 public class Server {
 	private static Server server;

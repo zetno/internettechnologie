@@ -44,13 +44,12 @@ public class ClientReceiveThread extends Thread {
 
 				if (action.equals("accesstoken")) {
 					String token = jsonMessage.getJSONObject("message").getString("token");
-					System.out.println(token);
 					String username = Model.getInstance().getUsername();
 					String password = Model.getInstance().getPassword();
 					Model.getInstance().userLoggedIn(username, password, token);
 
 				} else if (action.equals("response")) {
-					int response = Integer.parseInt(jsonMessage.getJSONObject("message").getString("status_code"));
+					int response = jsonMessage.getJSONObject("message").getInt("status_code");
 					if (response == 100) {
 						System.out.println("You are logged in as user");
 					} else if (response == 200) {
