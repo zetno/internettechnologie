@@ -51,7 +51,6 @@ public class Model {
 		do {
 			token = Integer.toString((int) (Math.floor((Math.random() * 100000000))));
 			check = false;
-
 			for (User user : users) {
 				if (token.equals(user.getAccesstoken())) {
 					check = true;	
@@ -62,5 +61,11 @@ public class Model {
 		
 		return token;
 	}
-
+	
+	public void addAuction(int id, String name, int minPrice, int highestBid, int endTime) {
+		//Check if the auction allready excists
+	/*	for (Auction auction : auctions) {
+			
+		}*/
+	}
 }

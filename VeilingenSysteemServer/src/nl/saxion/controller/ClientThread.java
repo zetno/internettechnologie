@@ -32,6 +32,9 @@ public class ClientThread extends Thread {
 				switch (message.getAction()) {
 					case "authorize": authorize(message.getMessage()); break;
 					case "postnewbid": createAuction(message.getMessage()); break;
+					case "getauctions": sendCurrentAuctions(); break;
+					case "postbid": /*TODO: add bid to auction */; break;
+					default : sendResponseMessage(203); break;
 				}
 			} catch (BadInputException bie){
 				sendResponseMessage(200);
@@ -68,7 +71,7 @@ public class ClientThread extends Thread {
 		double minBid = json.getDouble("minimumbid");
 		if (!token.isEmpty()) {
 			if(!item.isEmpty() && !Double.isNaN(minBid) && minBid > 0){
-				
+				//TODO: add auction in model
 			}else{
 				throw new BadInputException();
 			}
@@ -77,6 +80,10 @@ public class ClientThread extends Thread {
 		}
 	}
 
+	private void sendCurrentAuctions(){
+		//TODO
+	}
+	
 	private void sendAccessToken(String token) throws JSONException {
 		JSONObject jsonAccessToken = new JSONObject();
 		jsonAccessToken.put("action", "accesstoken");
@@ -92,16 +99,15 @@ public class ClientThread extends Thread {
 	
 	private void sendResponseMessage(int statuscode) {
 		try {
-			JSONObject jsonErrorMessage = new JSONObject();
-			jsonErrorMessage.put("action", "response");
+			JSONObject jsonResponseMessage = new JSONObject();
+			jsonResponseMessage.put("action", "response");
 
-			JSONObject jsonErrorMessageMessage = new JSONObject();
-			jsonErrorMessageMessage.put("status_code", statuscode);
+			JSONObject jsonResponseMessageMessage = new JSONObject();
+			jsonResponseMessageMessage.put("status_code", statuscode);
 
-			jsonErrorMessage.put("Message with statuscode " + Integer.toString(statuscode) + " is send", jsonErrorMessageMessage);
+			jsonResponseMessage.put("message", jsonResponseMessageMessage);
 
-			sendToClient(jsonErrorMessage.toString());
-			System.out.println("Erorr ");
+			sendToClient(jsonResponseMessage.toString());
 		} catch (JSONException e) {
 			System.out.println("internal server error: SendErrorMessage");
 		}
