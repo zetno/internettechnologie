@@ -9,7 +9,6 @@ public class Model {
 	private User user;
 	private String username;
 	private String password;
-	private String token;
 	public static Model getInstance(){
 		if(model == null){
 			model = new Model();

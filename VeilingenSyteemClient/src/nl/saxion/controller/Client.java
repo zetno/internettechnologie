@@ -38,25 +38,27 @@ public class Client {
 			ClientReceiveThread crt = new ClientReceiveThread(socket);
 			crt.start();
 
-			ClientSendThread cstAuthorize = new ClientSendThread(socket,
-					authorize.toString());
+			ClientSendThread cstAuthorize = new ClientSendThread(socket,authorize.toString());
 			cstAuthorize.start();
 			boolean hasToken = Model.getInstance().hasToken();
-			int input = 0;
-			while (input != 4 && !hasToken) {
+			String input = "";
+			while (!input.equals("4") && !hasToken) {
 				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
-				input = s.nextInt();
+				
+					input = s.nextLine().trim();
+				
 				switch (input) {
-				case 1:
+				case "1":
 					JSONObject makeAuction = new JSONObject();
 					makeAuction.put("action", "postnewbid");
-
+					
+					System.out.println("You choose make auction.");
 					System.out.println("What do you want to offer?");
 					String thing = s.next();
 					System.out.println("What is the minimun price?");
 					double price = s.nextDouble();
-					System.out.println("How many hours do you want action to last?");
-					long time = s.nextInt();
+					System.out.println("how many hours do you want to act your offer?");
+					long time = s.nextLong();
 
 					Date date = new Date(System.currentTimeMillis()
 							+ TimeUnit.HOURS.toMillis(time));
@@ -70,26 +72,25 @@ public class Client {
 					
 					ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());
 					citMakeAuction.start();
-					System.out.println("Done.");
+					System.out.println(thing + " is added to Veiling.nl");
 					break;
-				case 2:
+				case "2":
 
 					JSONObject getauctions = new JSONObject();
 					getauctions.put("action", "getauctions");
 					getauctions.put("message", "null");
-
-					ClientSendThread citGetAuction = new ClientSendThread(
-							socket, getauctions.toString());
+					System.out.println("All auction:");
+					ClientSendThread citGetAuction = new ClientSendThread(socket, getauctions.toString());
 					citGetAuction.start();
 					break;
 
-				case 3:
+				case "3":
 					JSONObject postBid = new JSONObject();
 					postBid.put("action", "postbid");
-
-					System.out.println("Which case(Enter auction Id)?");
+					System.out.println("Bid");
+					System.out.println("Which case do you want to bid?\nEnter auction Id:");
 					String nameOfThing = s.next();
-					System.out.println("Which price?");
+					System.out.println("How much money do you want to offer?");
 					double priceOfThing = s.nextDouble();
 
 					JSONObject bidMsg = new JSONObject();
@@ -102,8 +103,11 @@ public class Client {
 					ClientSendThread citPostBid = new ClientSendThread(socket,
 							postBid.toString());
 					citPostBid.start();
-
+					System.out.println("Your bid is sended.");
 				default:
+					
+						System.out.println("Please choose a valid number.");
+					
 					break;
 				}
 			}
@@ -113,7 +117,7 @@ public class Client {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
+		}finally{
 			s.close();
 		}
 	}
