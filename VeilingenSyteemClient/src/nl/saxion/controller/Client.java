@@ -40,13 +40,12 @@ public class Client {
 
 			ClientSendThread cstAuthorize = new ClientSendThread(socket,authorize.toString());
 			cstAuthorize.start();
+			
 			boolean hasToken = Model.getInstance().hasToken();
 			String input = "";
 			while (!input.equals("4") && !hasToken) {
 				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
-				
 					input = s.nextLine().trim();
-				
 				switch (input) {
 				case "1":
 					JSONObject makeAuction = new JSONObject();
@@ -60,8 +59,7 @@ public class Client {
 					System.out.println("how many hours do you want to act your offer?");
 					long time = s.nextLong();
 
-					Date date = new Date(System.currentTimeMillis()
-							+ TimeUnit.HOURS.toMillis(time));
+					Date date = new Date(System.currentTimeMillis()+ TimeUnit.HOURS.toMillis(time));
 
 					JSONObject makeMsg = new JSONObject();
 					makeMsg.put("accesstoken", Model.getInstance().getToken());
@@ -69,7 +67,6 @@ public class Client {
 					makeMsg.put("mininumbid", price);
 					makeMsg.put("enddate", time);
 					makeAuction.put("message", makeMsg);
-					
 					ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());
 					citMakeAuction.start();
 					System.out.println(thing + " is added to Veiling.nl");
@@ -79,9 +76,10 @@ public class Client {
 					JSONObject getauctions = new JSONObject();
 					getauctions.put("action", "getauctions");
 					getauctions.put("message", "null");
-					System.out.println("All auction:");
+					
 					ClientSendThread citGetAuction = new ClientSendThread(socket, getauctions.toString());
 					citGetAuction.start();
+				
 					break;
 
 				case "3":
@@ -100,10 +98,10 @@ public class Client {
 
 					postBid.put("message", bidMsg);
 
-					ClientSendThread citPostBid = new ClientSendThread(socket,
-							postBid.toString());
+					ClientSendThread citPostBid = new ClientSendThread(socket,postBid.toString());
 					citPostBid.start();
 					System.out.println("Your bid is sended.");
+					
 				default:
 					
 						System.out.println("Please choose a valid number.");
@@ -112,10 +110,8 @@ public class Client {
 				}
 			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			s.close();

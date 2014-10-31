@@ -43,25 +43,27 @@ public class ClientReceiveThread extends Thread {
 				String action = jsonMessage.getString("action");
 
 				if (action.equals("accesstoken")) {
-					String token = jsonMessage.getJSONObject("message").getString("token");
+					String token = jsonMessage.getJSONObject("message")
+							.getString("token");
 					String username = Model.getInstance().getUsername();
 					String password = Model.getInstance().getPassword();
 					Model.getInstance().userLoggedIn(username, password, token);
-					
+
 				} else if (action.equals("response")) {
-					int response = jsonMessage.getJSONObject("message").getInt("status_code");
+					int response = jsonMessage.getJSONObject("message").getInt(
+							"status_code");
 					if (response == 100) {
 						System.out.println("You are logged in as user");
 					} else if (response == 200) {
 						System.out.println("Wrong username or password.");
 					} else if (response == 202) {
 						System.out.println("First log in");
-					}else if (response == 204) {
+					} else if (response == 204) {
 						System.out.println("Auction had already made.");
 					}
 
 				} else if (action.equals("postauctions")) {
-					//
+					System.out.println(jsonMessage);
 					JSONArray messageContent = (JSONArray) jsonMessage
 							.get("message");
 
@@ -80,10 +82,17 @@ public class ClientReceiveThread extends Thread {
 						System.out.println(highestbid + "\n------------");
 					}
 
+				}else if(action.equals("postwinner")){
+					String itemName = jsonMessage.getJSONObject("message")
+							.getString("laptop");
+					double price = jsonMessage.getJSONObject("message")
+							.getDouble("price");
+
+					System.out.println("Congratulation you won " + itemName
+							+ " with price: " + price);
 				}
 
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
