@@ -33,8 +33,8 @@ public class ClientThread extends Thread {
 				Message message = ClientThreadHandler.messageToAction(clientSocket);
 				System.out.println(message.getAction());
 				switch (message.getAction()) {
-					case "authorize": authorize(message.getMessage()); break;
-					case "postnewbid": createAuction(message.getMessage());break;
+					case "authorize": authorize(message.getJSONObjectMessage()); break;
+					case "postnewbid": createAuction(message.getJSONObjectMessage());break;
 					case "getauctions": sendCurrentAuctions(); break;
 					case "postbid": /*TODO: add bid to auction */; break;
 					default : sendResponseMessage(203); break;
@@ -89,6 +89,7 @@ public class ClientThread extends Thread {
 	}
 
 	private void sendCurrentAuctions() throws JSONException{
+		System.out.println("sendcurrentauctions");
 		JSONObject jsonMessage = new JSONObject();
 		jsonMessage.put("action", "postauctions");
 		
