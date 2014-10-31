@@ -23,8 +23,7 @@ public class ClientReceiveThread extends Thread {
 		while (true) {
 			try {
 
-				BufferedReader in = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
+				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String message = in.readLine();
 				parseAction(message);
 
@@ -43,15 +42,13 @@ public class ClientReceiveThread extends Thread {
 				String action = jsonMessage.getString("action");
 
 				if (action.equals("accesstoken")) {
-					String token = jsonMessage.getJSONObject("message")
-							.getString("token");
+					String token = jsonMessage.getJSONObject("message").getString("token");
 					String username = Model.getInstance().getUsername();
 					String password = Model.getInstance().getPassword();
 					Model.getInstance().userLoggedIn(username, password, token);
 
 				} else if (action.equals("response")) {
-					int response = jsonMessage.getJSONObject("message").getInt(
-							"status_code");
+					int response = jsonMessage.getJSONObject("message").getInt("status_code");
 					if (response == 100) {
 						System.out.println("You are logged in as user");
 					} else if (response == 200) {
@@ -64,33 +61,24 @@ public class ClientReceiveThread extends Thread {
 
 				} else if (action.equals("postauctions")) {
 					System.out.println("All auctions:");
-					System.out.println(jsonMessage);
-					JSONArray messageContent = (JSONArray) jsonMessage
-							.get("message");
+					JSONArray messageContent = (JSONArray) jsonMessage.get("message");
 
 					for (int i = 0; i < messageContent.length(); i++) {
-						String auctionid = messageContent.getJSONObject(i)
-								.getString("auctionid");
-						System.out.println(auctionid);
-						String name = messageContent.getJSONObject(i)
-								.getString("name");
-						System.out.println(name);
-						String endtime = messageContent.getJSONObject(i)
-								.getString("endtime");
-						System.out.println(endtime);
-						String highestbid = messageContent.getJSONObject(i)
-								.getString("highestbid");
-						System.out.println(highestbid + "\n------------");
+						int auctionid = messageContent.getJSONObject(i).getInt("auctionid");
+						System.out.println("Auction ID: "+auctionid);
+						String name = messageContent.getJSONObject(i).getString("name");
+						System.out.println("Item name: "+name);
+						int endtime = messageContent.getJSONObject(i).getInt("endtime");
+						System.out.println("End time: "+endtime);
+						double highestbid = messageContent.getJSONObject(i).getDouble("highestbid");
+						System.out.println("Hiest bid: "+highestbid + "\n------------");
 					}
 
 				}else if(action.equals("postwinner")){
-					String itemName = jsonMessage.getJSONObject("message")
-							.getString("laptop");
-					double price = jsonMessage.getJSONObject("message")
-							.getDouble("price");
+					String itemName = jsonMessage.getJSONObject("message").getString("laptop");
+					double price = jsonMessage.getJSONObject("message").getDouble("price");
 
-					System.out.println("Congratulation you won " + itemName
-							+ " with price: " + price);
+					System.out.println("Congratulation you won " + itemName+ " with price: " + price);
 				}
 
 			} catch (JSONException e) {
