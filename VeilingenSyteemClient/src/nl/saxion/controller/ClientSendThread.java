@@ -21,16 +21,15 @@ public class ClientSendThread extends Thread{
 
 			Scanner sc = new Scanner(System.in);
 			
-			
 			try {
-				OutputStream ops = socket.getOutputStream();
-				PrintWriter p = new PrintWriter(ops,true);
-				
-				p.println(json);
+				 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+				 out.println(json);
+				 System.out.println(json);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+				   
 		
 	}
 }

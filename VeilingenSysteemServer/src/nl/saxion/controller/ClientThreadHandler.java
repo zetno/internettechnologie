@@ -18,6 +18,7 @@ public class ClientThreadHandler {
 	public static Message messageToAction(Socket socket) throws JSONException, IOException, BadInputException{
 		BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
 		String content = in.readLine();
+		System.out.println(content);
 		return parseJson(content);
 	}
 	
@@ -25,8 +26,17 @@ public class ClientThreadHandler {
 		if (!json.isEmpty() && isJSONValid(json)) {
 			JSONObject jsonMessage = new JSONObject(json);
 			String action = jsonMessage.getString("action");
-			JSONObject content = jsonMessage.getJSONObject("message");
-			return new Message(action, content);
+			
+			if(jsonMessage.optJSONObject("message") != null){
+				JSONObject content = jsonMessage.getJSONObject("message");
+				return new Message(action, content.toString());
+			}else if(jsonMessage.optString("message") != null){
+				String content = jsonMessage.optString("message");
+				return new Message(action, content.toString());
+			}
+			
+			throw new BadInputException();
+			
 		}else{
 			throw new BadInputException();
 		}
