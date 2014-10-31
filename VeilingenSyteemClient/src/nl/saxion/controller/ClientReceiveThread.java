@@ -63,6 +63,7 @@ public class ClientReceiveThread extends Thread {
 					}
 
 				} else if (action.equals("postauctions")) {
+					System.out.println("All auctions:");
 					System.out.println(jsonMessage);
 					JSONArray messageContent = (JSONArray) jsonMessage
 							.get("message");

@@ -71,12 +71,11 @@ public class Client {
 					citMakeAuction.start();
 					System.out.println(thing + " is added to Veiling.nl");
 					break;
+					
 				case "2":
-
 					JSONObject getauctions = new JSONObject();
 					getauctions.put("action", "getauctions");
 					getauctions.put("message", "null");
-					
 					ClientSendThread citGetAuction = new ClientSendThread(socket, getauctions.toString());
 					citGetAuction.start();
 				
@@ -103,7 +102,9 @@ public class Client {
 					System.out.println("Your bid is sended.");
 					
 				default:
-					
+						if (input.equals("4")) {
+							System.out.println("Bye.");
+						}else
 						System.out.println("Please choose a valid number.");
 					
 					break;
