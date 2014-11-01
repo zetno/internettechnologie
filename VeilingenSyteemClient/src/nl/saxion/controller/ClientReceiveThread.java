@@ -71,7 +71,7 @@ public class ClientReceiveThread extends Thread {
 						int endtime = messageContent.getJSONObject(i).getInt("endtime");
 						System.out.println("End time: "+endtime);
 						double highestbid = messageContent.getJSONObject(i).getDouble("highestbid");
-						System.out.println("Hiest bid: "+highestbid + "\n------------");
+						System.out.println("highest bid: "+highestbid + "\n------------");
 					}
 
 				}else if(action.equals("postwinner")){
