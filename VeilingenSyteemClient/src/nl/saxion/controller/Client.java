@@ -70,7 +70,7 @@ public class Client {
 					makeMsg.put("accesstoken", Model.getInstance().getToken());
 					makeMsg.put("itemname", thing);
 					makeMsg.put("mininumbid", price);
-					makeMsg.put("enddate", time);
+					makeMsg.put("endhours", time);
 					makeAuction.put("message", makeMsg);
 					ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());
 					citMakeAuction.start();
