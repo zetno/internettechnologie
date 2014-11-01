@@ -111,8 +111,10 @@ public class Client {
 				}
 			}
 		} catch (UnknownHostException e) {
+			System.out.println("can't find the server.");
 			e.printStackTrace();
 		} catch (IOException e) {
+			System.out.println("failed to connect with server.");
 			e.printStackTrace();
 		}finally{
 			s.close();
