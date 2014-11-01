@@ -3,10 +3,7 @@ package nl.saxion.controller;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import nl.saxion.model.Model;
 
@@ -14,15 +11,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Client {
-
+	static Socket  socket;
 	public static void main(String[] args) throws JSONException {
-		Scanner s = new Scanner(System.in);
+		
 		String username = "";
 		String password = "";
+		
 		System.out.println("Type in your username:");
-		username = s.nextLine();
+		username = vraagString();
 		System.out.println("Type in your password:");
-		password = s.nextLine();
+		password = vraagString();
 
 		JSONObject authorize = new JSONObject();
 		authorize.put("action", "authorize");
@@ -34,19 +32,22 @@ public class Client {
 
 		Model.getInstance().setUsername(username);
 		Model.getInstance().setPassword(password);
-		try {
+		
+		try{
 			Socket socket = new Socket("localhost", 8081);
 			ClientReceiveThread crt = new ClientReceiveThread(socket);
 			crt.start();
-
+			
 			ClientSendThread cstAuthorize = new ClientSendThread(socket,authorize.toString());
 			cstAuthorize.start();
-			
+		
 			boolean hasToken = Model.getInstance().hasToken();
+			
+			
 			String input = "";
 			while (!input.equals("4") && !hasToken) {
 				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
-				System.out.print("Your choice: ");
+				System.out.println("Your choice: ");
 					input = vraagString();
 				switch (input) {
 				case "1":
@@ -55,17 +56,14 @@ public class Client {
 					
 					System.out.println("You choose make auction.");
 					System.out.println("What do you want to offer?");
-					String thing = s.nextLine();
+					String thing = vraagString();
 					
 					System.out.println("What is the minimun price?");
-					double price = vraagNummer();
+					double price = vraagDouble();
 					
 					System.out.println("how many hours do you want to act your offer?");
-					int time = s.nextInt();
+					int time = vraagNummer();
 					
-					SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy:HH:mm:SS");
-					Date date = new Date(System.currentTimeMillis()+ TimeUnit.HOURS.toMillis(time));
-					System.out.println(dateFormat.format(date));
 					JSONObject makeMsg = new JSONObject();
 					makeMsg.put("accesstoken", Model.getInstance().getToken());
 					makeMsg.put("itemname", thing);
@@ -117,13 +115,12 @@ public class Client {
 			}
 		} catch (UnknownHostException e) {
 			System.out.println("can't find the server.");
-			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("failed to connect with server.");
-			e.printStackTrace();
 		}finally{
-			s.close();
+		
 		}
+	
 	}
 	
 	/**
@@ -139,9 +136,8 @@ public class Client {
 			try {
 				ingevoerdNummer = Integer.parseInt(invoer.nextLine());
 				doorvragen = false;
-				invoer.close();
 			} catch (NumberFormatException e) {
-				System.out.print("FOUT: Geef een nummer: ");
+				System.out.print("FOUT: Give a number: ");
 				doorvragen = true;
 			}
 		}
@@ -161,9 +157,8 @@ public class Client {
 			ingevoerdeString = invoer.nextLine();
 			if (ingevoerdeString.length() != 0) {
 				doorvragen = false;
-				invoer.close();
 			} else {
-				System.out.print("FOUT: Voer in ieder geval 1 karakter in: ");
+				System.out.print("FOUT: Enter at least a character: ");
 			}
 		}
 		return ingevoerdeString;
@@ -182,9 +177,8 @@ public class Client {
 			try {
 				ingevoerdNummer = Double.parseDouble(invoer.nextLine());
 				doorvragen = false;
-				invoer.close();
 			} catch (NumberFormatException e) {
-				System.out.print("FOUT: Geef een nummer: ");
+				System.out.print("FOUT: Give a number: ");
 				doorvragen = true;
 			}
 		}
@@ -204,13 +198,12 @@ public class Client {
 			try {
 				ingevoerdNummer = Long.parseLong(invoer.nextLine());
 				doorvragen = false;
-				invoer.close();
 			} catch (NumberFormatException e) {
-				System.out.print("FOUT: Geef een nummer: ");
+				System.out.print("FOUT: Give a number: ");
 				doorvragen = true;
 			}
 		}
 		return ingevoerdNummer;
 	}
-
+	
 }
