@@ -106,7 +106,7 @@ public class ClientThread extends Thread {
 		long endTime = ClientThreadHandler.createEpochDate(json.getInt("endhours"));
 		double minBid = json.getDouble("mininumbid");
 
-		if (!token.isEmpty() && model.isValidAccessToken(token)) {
+		if (token != null && token != "" && !token.isEmpty() && model.isValidAccessToken(token)) {
 			if(!name.isEmpty() && minBid >= 0 && endTime > 0){
 				model.addAuction(name, minBid, endTime);
 				sendResponseMessage(100);
@@ -131,7 +131,7 @@ public class ClientThread extends Thread {
 		double bid = json.getDouble("bid");
 		int auctionId = json.getInt("auctionsID");
 		
-		if (!token.isEmpty() && model.isValidAccessToken(token)) {
+		if (token != null && token != "" && !token.isEmpty() && model.isValidAccessToken(token)) {
 			if( bid >= 0 && auctionId >= 0 && model.addBid(auctionId, bid, token)){
 				sendResponseMessage(100);
 			}else{
