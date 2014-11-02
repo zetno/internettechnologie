@@ -1,6 +1,5 @@
 package nl.saxion.model;
 
-
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -21,37 +20,47 @@ public class Model {
 	private String password;
 	private String token;
 
-	public static Model getInstance(){
-		if(model == null){
+	public static Model getInstance() {
+		if (model == null) {
 			model = new Model();
 		}
-		
+
 		return model;
 	}
 
-	public String getToken(){
+	public String getToken() {
 		return token;
-	} 
+
+	}
+
+	
 	
 	public void userLoggedIn(String username, String password, String accesstoken) throws JSONException{
+
 		user = new User(username, password);
 		user.setAccesstoken(accesstoken);
 		Client.program();
 	}
+
 	public String getUsername() {
 		return username;
 	}
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public boolean hasToken(){
-		if (user!=null  && !user.getAccesstoken().equals("") && user.getAccesstoken() !=null){
+
+	public boolean hasToken() {
+		if (user != null && !user.getAccesstoken().equals("")
+				&& user.getAccesstoken() != null) {
 			return true;
 		}
 		return false;
@@ -60,8 +69,12 @@ public class Model {
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
 
+	/**
+	 * Leest json String en paarsed 
+	 * 
+	 * @param json 
+	 */
 	public void parseAction(String json) {
 		if (!json.isEmpty()) {
 			JSONObject jsonMessage;
@@ -71,13 +84,16 @@ public class Model {
 				String action = jsonMessage.getString("action");
 
 				if (action.equals("accesstoken")) {
+
 					token = jsonMessage.getJSONObject("message").getString("token");
 					String username = getUsername();
 					String password = getPassword();
+
 					userLoggedIn(username, password, token);
 
 				} else if (action.equals("response")) {
-					int response = jsonMessage.getJSONObject("message").getInt("status_code");
+					int response = jsonMessage.getJSONObject("message").getInt(
+							"status_code");
 					if (response == 100) {
 						//Correct call
 					} else if (response == 200) {
@@ -89,33 +105,39 @@ public class Model {
 						System.out.println("First log in");
 					} else if (response == 204) {
 						System.out.println("Auction had already made.");
-					}else if (response == 205){
+					} else if (response == 205) {
 						System.out.println("Your bid is too low.");
 					}
 					Client.continueProgram();
 				} else if (action.equals("postauctions")) {
 					System.out.println("All auctions:");
-					JSONArray messageContent = (JSONArray) jsonMessage.get("message");
+					JSONArray messageContent = (JSONArray) jsonMessage
+							.get("message");
 
 					for (int i = 0; i < messageContent.length(); i++) {
-						int auctionid = messageContent.getJSONObject(i).getInt("auctionid");
-						System.out.println("Auction ID: "+auctionid);
-						String name = messageContent.getJSONObject(i).getString("name");
-						System.out.println("Item name: "+name);
-						long endtime = messageContent.getJSONObject(i).getLong("endtime");
-						System.out.println("End time: "+endtime);
-						double highestbid = messageContent.getJSONObject(i).getDouble("highestbid");
-						System.out.println("highest bid: "+highestbid + "\n------------");
+						int auctionid = messageContent.getJSONObject(i).getInt(
+								"auctionid");
+						System.out.println("Auction ID: " + auctionid);
+						String name = messageContent.getJSONObject(i)
+								.getString("name");
+						System.out.println("Item name: " + name);
+						long endtime = messageContent.getJSONObject(i).getLong(
+								"endtime");
+						System.out.println("End time: " + endtime);
+						double highestbid = messageContent.getJSONObject(i)
+								.getDouble("highestbid");
+						System.out.println("highest bid: " + highestbid
+								+ "\n------------");
 					}
 					
 					Client.continueProgram();
 
-				}else if(action.equals("postwinner")){
-					String itemName = jsonMessage.getJSONObject("message").getString("itemname");
-					double price = jsonMessage.getJSONObject("message").getDouble("price");
-
+				} else if (action.equals("postwinner")) {
+					String itemName = jsonMessage.getJSONObject("message")
+							.getString("itemname");
+					double price = jsonMessage.getJSONObject("message")
+							.getDouble("price");
 					System.out.println("Congratulation you won " + itemName+ " with price: " + price);
-					
 				}
 
 			} catch (JSONException e) {
@@ -123,46 +145,9 @@ public class Model {
 			}
 		}
 	}
-	
-	private boolean checkToken(){
-		if (token !=null){
-			return true;
-		}
-		return false;
-	}
-	
-	public void login() throws JSONException, UnknownHostException, IOException {
-		Scanner scan = new Scanner(System.in);
-		while (!checkToken()) {
-			String username = "";
-			String password = "";
 
-			System.out.println("Type in your username:");
-			username = scan.nextLine();
-			System.out.println("Type in your password:");
-			password = scan.nextLine();
-
-			JSONObject authorize = new JSONObject();
-			authorize.put("action", "authorize");
-
-			JSONObject msg = new JSONObject();
-			msg.put("username", username);
-			msg.put("password", password);
-			authorize.put("message", msg);
-
-			setUsername(username);
-			setPassword(password);
-
-			Socket socket = new Socket("localhost", 8081);
-			ClientSendThread cstAuthorize = new ClientSendThread(socket,authorize.toString());
-			cstAuthorize.start();
-			ClientReceiveThread crt = new ClientReceiveThread(socket);
-			crt.start();
-
-		}
-	}
-	
-	public void resetLoggedInUser(){
+ public void resetLoggedInUser(){
 		user = null;
 	}
+
 }
