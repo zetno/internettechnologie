@@ -91,9 +91,9 @@ public class Client {
 				citMakeAuction.start();
 				System.out.println(thing + " is added to Veiling.nl");
 				
-				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
-				System.out.println("Your choice: ");
-				break;
+//				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
+//				System.out.println("Your choice: ");
+				return;
 				
 			case "2":
 				JSONObject getauctions = new JSONObject();
@@ -123,13 +123,18 @@ public class Client {
 				citPostBid.start();
 				System.out.println("Your bid is sended.");
 				
-				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
-				System.out.println("Your choice: ");
-				break;
+//				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
+//				System.out.println("Your choice: ");
+				return;
 			case  "4":
 				end = false;
 				Model.getInstance().resetLoggedInUser();
 				System.out.println("Goodbye");
+				try {
+					socket.close();
+				} catch (IOException e) {
+//					e.printStackTrace();
+				}
 				break;
 			default:
 					System.out.println("Please choose a valid number.");

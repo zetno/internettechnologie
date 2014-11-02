@@ -32,7 +32,11 @@ public class ClientThreadHandler {
 	public static Message messageToAction(Socket socket) throws JSONException, IOException, BadInputException{
 		BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()));
 		String content = in.readLine();
-		System.out.println(content);
+		
+		if(content == null){
+			return null;
+		}
+		
 		return parseJson(content);
 	}
 	

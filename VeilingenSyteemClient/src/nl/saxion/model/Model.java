@@ -79,7 +79,7 @@ public class Model {
 				} else if (action.equals("response")) {
 					int response = jsonMessage.getJSONObject("message").getInt("status_code");
 					if (response == 100) {
-						System.out.println("You are logged in as user");
+						//Correct call
 					} else if (response == 200) {
 						System.out.println("Wrong username or password.");
 						if(user == null){
@@ -92,7 +92,7 @@ public class Model {
 					}else if (response == 205){
 						System.out.println("Your bid is too low.");
 					}
-
+					Client.continueProgram();
 				} else if (action.equals("postauctions")) {
 					System.out.println("All auctions:");
 					JSONArray messageContent = (JSONArray) jsonMessage.get("message");
@@ -115,6 +115,7 @@ public class Model {
 					double price = jsonMessage.getJSONObject("message").getDouble("price");
 
 					System.out.println("Congratulation you won " + itemName+ " with price: " + price);
+					
 				}
 
 			} catch (JSONException e) {

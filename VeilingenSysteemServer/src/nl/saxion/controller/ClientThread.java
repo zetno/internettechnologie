@@ -45,6 +45,12 @@ public class ClientThread extends Thread {
 		while (true) {
 			try {
 				Message message = ClientThreadHandler.messageToAction(clientSocket);
+				
+				//connection has been quit
+				if(null == message){
+					return;
+				}
+				
 				System.out.println(message.getAction());
 				switch (message.getAction()) {
 					case "authorize": authorize(message.getJSONObjectMessage()); break;
