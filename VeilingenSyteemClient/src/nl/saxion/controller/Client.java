@@ -5,6 +5,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import javax.swing.text.AbstractDocument.BranchElement;
+
 import nl.saxion.model.Model;
 
 import org.json.JSONException;
@@ -103,6 +105,7 @@ public class Client {
 					ClientSendThread citPostBid = new ClientSendThread(socket,postBid.toString());
 					citPostBid.start();
 					System.out.println("Your bid is sended.");
+					break;
 				case  "4":
 					end= false;
 					System.out.println("Goodbye");
