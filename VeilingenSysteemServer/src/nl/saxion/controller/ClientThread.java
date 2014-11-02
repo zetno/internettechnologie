@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import nl.saxion.controller.exceptions.AllreadyExistsException;
 import nl.saxion.controller.exceptions.BadInputException;
+import nl.saxion.controller.exceptions.BidTooLowException;
 import nl.saxion.controller.exceptions.ForbiddenException;
 import nl.saxion.model.Auction;
 import nl.saxion.model.Message;
@@ -49,6 +50,8 @@ public class ClientThread extends Thread {
 				sendResponseMessage(202);
 			} catch (AllreadyExistsException e) {
 				sendResponseMessage(204);
+			} catch (BidTooLowException e) {
+				sendResponseMessage(205);
 			}
 		}
 	}
@@ -88,13 +91,13 @@ public class ClientThread extends Thread {
 		}
 	}
 	
-	private void addBid(JSONObject json) throws JSONException, ForbiddenException, BadInputException{
+	private void addBid(JSONObject json) throws JSONException, ForbiddenException, BadInputException, BidTooLowException{
 		String token = json.getString("accesstoken");
 		double bid = json.getDouble("bid");
 		int auctionId = json.getInt("auctionsID");
 		
 		if (!token.isEmpty() && model.isValidAccessToken(token)) {
-			if( bid >= 0 && auctionId >= 0 && model.addBid(auctionId, bid)){
+			if( bid >= 0 && auctionId >= 0 && model.addBid(auctionId, bid, token)){
 				sendResponseMessage(100);
 			}else{
 				throw new BadInputException();

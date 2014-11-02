@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.saxion.controller.exceptions.AllreadyExistsException;
+import nl.saxion.controller.exceptions.BidTooLowException;
 
 public class Model {
 	private static Model model;
@@ -29,9 +30,14 @@ public class Model {
 		users.add(new User("bob", "wachtwoord"));
 		users.add(new User("rendy", "1234"));
 		users.add(new User("tim", "planken"));
-
-		currentAuctions.add(new Auction(1, "Bike", 0, 0, 1415404800));
-		currentAuctions.add(new Auction(2, "Car", 0, 0, 1415404800));
+		
+		try {
+			addAuction("bicicle", 0.0, 1414959852L);
+			addAuction("candy bar", 20.0, 1414959852L);
+		} catch (AllreadyExistsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public String authorizeUser(String username, String password) {
@@ -87,10 +93,14 @@ public class Model {
 		currentAuctions.add(new Auction( generateUniqueAuctionId(), name, minBid, endTime));
 	}
 	
-	public boolean addBid(int auctionId, double bid){
+	public boolean addBid(int auctionId, double bid, String accesstoken) throws BidTooLowException{
 		for (Auction auction : currentAuctions) {
 			if(auction.getId() == auctionId){
-				
+				if(bid > auction.getHighestBid()){
+					auction.setHighestBid(bid, accesstoken);
+				}else{
+					throw new BidTooLowException();
+				}
 			}
 		}
 		

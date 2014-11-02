@@ -3,9 +3,11 @@ package nl.saxion.model;
 public class Auction {
 	private int id;
 	private String name;
-	private double highestBid;
 	private double minPrice;
 	private long endTime; //in epoch
+
+	private double highestBid;
+	private String accessTokenHighestBid;
 	
 	/**
 	 * @param id
@@ -42,8 +44,9 @@ public class Auction {
 		return highestBid;
 	}
 	
-	public void setHighestBid(double highestBid) {
+	public void setHighestBid(double highestBid, String accessToken) {
 		this.highestBid = highestBid;
+		this.accessTokenHighestBid = accessToken;
 	}
 	
 	public long getEndTime() {
