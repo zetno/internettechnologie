@@ -1,6 +1,14 @@
 package nl.saxion.model;
 
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Scanner;
+
+import nl.saxion.controller.ClientReceiveThread;
+import nl.saxion.controller.ClientSendThread;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,11 +69,11 @@ public class Model {
 				String action = jsonMessage.getString("action");
 
 				if (action.equals("accesstoken")) {
-					String token = jsonMessage.getJSONObject("message").getString("token");
+					token = jsonMessage.getJSONObject("message").getString("token");
 					String username = Model.getInstance().getUsername();
 					String password = Model.getInstance().getPassword();
 					userLoggedIn(username, password, token);
-					setToken(token);
+					
 
 				} else if (action.equals("response")) {
 					int response = jsonMessage.getJSONObject("message").getInt("status_code");
@@ -77,6 +85,8 @@ public class Model {
 						System.out.println("First log in");
 					} else if (response == 204) {
 						System.out.println("Auction had already made.");
+					}else if (response == 205){
+						System.out.println("Your bid is too low.");
 					}
 
 				} else if (action.equals("postauctions")) {
@@ -107,5 +117,42 @@ public class Model {
 		}
 	}
 	
+	private boolean checkToken(){
+		if (token !=null){
+			return true;
+		}
+		return false;
+	}
+	
+	public void login() throws JSONException, UnknownHostException, IOException {
+		Scanner scan = new Scanner(System.in);
+		while (!checkToken()) {
+			String username = "";
+			String password = "";
+
+			System.out.println("Type in your username:");
+			username = scan.nextLine();
+			System.out.println("Type in your password:");
+			password = scan.nextLine();
+
+			JSONObject authorize = new JSONObject();
+			authorize.put("action", "authorize");
+
+			JSONObject msg = new JSONObject();
+			msg.put("username", username);
+			msg.put("password", password);
+			authorize.put("message", msg);
+
+			setUsername(username);
+			setPassword(password);
+
+			Socket socket = new Socket("localhost", 8081);
+			ClientSendThread cstAuthorize = new ClientSendThread(socket,authorize.toString());
+			cstAuthorize.start();
+			ClientReceiveThread crt = new ClientReceiveThread(socket);
+			crt.start();
+
+		}
+	}
 	
 }

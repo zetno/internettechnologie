@@ -5,15 +5,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import javax.swing.text.AbstractDocument.BranchElement;
-
 import nl.saxion.model.Model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Client {
-	static Socket  socket;
+	
 	public static void main(String[] args) throws JSONException {
 		
 		String username = "";
@@ -34,6 +32,7 @@ public class Client {
 
 		Model.getInstance().setUsername(username);
 		Model.getInstance().setPassword(password);
+		
 		
 		try{
 			Socket socket = new Socket("localhost", 8081);

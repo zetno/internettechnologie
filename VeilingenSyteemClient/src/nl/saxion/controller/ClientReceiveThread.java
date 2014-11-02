@@ -7,10 +7,6 @@ import java.net.Socket;
 
 import nl.saxion.model.Model;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class ClientReceiveThread extends Thread {
 	private Socket socket;
 
@@ -34,4 +30,5 @@ public class ClientReceiveThread extends Thread {
 	}
 
 	
+
 }
