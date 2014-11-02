@@ -65,6 +65,16 @@ public class Model {
 		return token;
 	}
 	
+	public boolean isValidAccessToken(String token){
+		for (User user : users) {
+			if(user.getAccesstoken().equals(token)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public void addAuction(String name, double minBid, int endTime) throws AllreadyExistsException {
 		//Check if the auction allready exists
 		for (Auction auction : currentAuctions) {

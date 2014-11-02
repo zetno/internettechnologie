@@ -71,14 +71,19 @@ public class ClientThread extends Thread {
 	}
 	
 	private void createAuction(JSONObject json) throws BadInputException, ForbiddenException, JSONException, AllreadyExistsException{
+		ClientThreadHandler.createEpochDate(2);
+		System.out.println("add auction, check if incorrect input");
 		String token = json.getString("accesstoken");
 		String name = json.getString("itemname");
-		int endDate = json.getInt("enddate");
+		int endHours = json.getInt("enddate");
 		double minBid = json.getDouble("minimumbid");
+		System.out.println("add auction, check if incorrect21 input");
 		
-		if (!token.isEmpty()) {
-			if(!name.isEmpty() && !Double.isNaN(minBid) && minBid >= 0 && endDate > 0){
-				model.addAuction(name, minBid, endDate);
+		if (!token.isEmpty() && model.isValidAccessToken(token)) {
+			if(!name.isEmpty() && minBid >= 0 && endHours > 0){
+				System.out.println("add auction");
+				//TODO: make epoch time  and add endhours
+				model.addAuction(name, minBid, endHours);
 				sendResponseMessage(100);
 			}else{
 				throw new BadInputException();
@@ -145,6 +150,4 @@ public class ClientThread extends Thread {
 			System.out.println("internal server error: SendErrorMessage");
 		}
 	}
-	
-	
 }

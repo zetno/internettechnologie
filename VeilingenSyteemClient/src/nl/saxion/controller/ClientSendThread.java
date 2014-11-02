@@ -23,6 +23,7 @@ public class ClientSendThread extends Thread{
 			try {
 				 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 				 out.println(json);
+				 System.out.println(json);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

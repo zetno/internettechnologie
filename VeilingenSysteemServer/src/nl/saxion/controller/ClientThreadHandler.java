@@ -54,4 +54,12 @@ public class ClientThreadHandler {
 	    }
 	    return true;
 	}
+	
+	public static int createEpochDate(int hours){
+		System.out.println("long: " + System.currentTimeMillis());
+		System.out.println("ing: " + (int) System.currentTimeMillis());
+		
+		
+		return hours;
+	}
 }
