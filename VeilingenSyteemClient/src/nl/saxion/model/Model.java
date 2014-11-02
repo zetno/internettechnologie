@@ -1,14 +1,9 @@
 package nl.saxion.model;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Scanner;
-
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import nl.saxion.controller.Client;
-import nl.saxion.controller.ClientReceiveThread;
-import nl.saxion.controller.ClientSendThread;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,10 +14,13 @@ public class Model {
 	private String username;
 	private String password;
 	private String token;
+	
+	private static ArrayList<String> winnings;
 
 	public static Model getInstance() {
 		if (model == null) {
 			model = new Model();
+			winnings = new ArrayList<String>();
 		}
 
 		return model;
@@ -30,13 +28,9 @@ public class Model {
 
 	public String getToken() {
 		return token;
-
 	}
-
-	
 	
 	public void userLoggedIn(String username, String password, String accesstoken) throws JSONException{
-
 		user = new User(username, password);
 		user.setAccesstoken(accesstoken);
 		Client.program();
@@ -71,7 +65,7 @@ public class Model {
 	}
 
 	/**
-	 * Leest json String en paarsed 
+	 * Leest json String en parsed 
 	 * 
 	 * @param json 
 	 */
@@ -97,9 +91,11 @@ public class Model {
 					if (response == 100) {
 						//Correct call
 					} else if (response == 200) {
-						System.out.println("Wrong username or password.");
 						if(user == null){
+							System.out.println("Wrong username or password.");
 							Client.logIn();
+						}else{
+							System.out.println("Bad input was entered.");
 						}
 					} else if (response == 202) {
 						System.out.println("First log in");
@@ -108,26 +104,33 @@ public class Model {
 					} else if (response == 205) {
 						System.out.println("Your bid is too low.");
 					}
-					Client.continueProgram();
+					
+					if(user != null){
+						Client.continueProgram();
+					}
 				} else if (action.equals("postauctions")) {
 					System.out.println("All auctions:");
 					JSONArray messageContent = (JSONArray) jsonMessage
 							.get("message");
 
-					for (int i = 0; i < messageContent.length(); i++) {
-						int auctionid = messageContent.getJSONObject(i).getInt(
-								"auctionid");
-						System.out.println("Auction ID: " + auctionid);
-						String name = messageContent.getJSONObject(i)
-								.getString("name");
-						System.out.println("Item name: " + name);
-						long endtime = messageContent.getJSONObject(i).getLong(
-								"endtime");
-						System.out.println("End time: " + endtime);
-						double highestbid = messageContent.getJSONObject(i)
-								.getDouble("highestbid");
-						System.out.println("highest bid: " + highestbid
-								+ "\n------------");
+					if(messageContent.length() > 0){
+						for (int i = 0; i < messageContent.length(); i++) {
+							int auctionid = messageContent.getJSONObject(i).getInt(
+									"auctionid");
+							System.out.println("Auction ID: " + auctionid);
+							String name = messageContent.getJSONObject(i)
+									.getString("name");
+							System.out.println("Item name: " + name);
+							long endtime = messageContent.getJSONObject(i).getLong(
+									"endtime");
+							System.out.println("End time: " + new SimpleDateFormat("yyyy-MM-dd HH:mm 'o''clock'").format(new Date(endtime)));
+							double highestbid = messageContent.getJSONObject(i)
+									.getDouble("highestbid");
+							System.out.println("highest bid: €" + String.format("%1$,.2f", highestbid)
+									+ "\n------------");
+						}
+					}else{
+						System.out.println("There are no running auctions");
 					}
 					
 					Client.continueProgram();
@@ -137,7 +140,8 @@ public class Model {
 							.getString("itemname");
 					double price = jsonMessage.getJSONObject("message")
 							.getDouble("price");
-					System.out.println("Congratulation you won " + itemName+ " with price: " + price);
+
+					winnings.add("Congratulations! You won a(n) " + itemName+ " with a price of: " + price);
 				}
 
 			} catch (JSONException e) {
@@ -146,8 +150,15 @@ public class Model {
 		}
 	}
 
- public void resetLoggedInUser(){
+	public void resetLoggedInUser(){
 		user = null;
 	}
+	
+	public ArrayList<String> getWinnings(){
+		return winnings;
+	}
 
+	public void clearWinnings(){
+		winnings.clear();
+	}
 }

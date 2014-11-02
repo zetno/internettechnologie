@@ -3,6 +3,7 @@ package nl.saxion.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.saxion.controller.ClientThread;
 import nl.saxion.controller.exceptions.AllreadyExistsException;
 import nl.saxion.controller.exceptions.BidTooLowException;
 
@@ -17,6 +18,7 @@ public class Model {
 	public static Model getInstance() {
 		if (model == null) {
 			model = new Model();
+			clientThreads = new ArrayList<ClientThread>();
 		}
 
 		return model;
@@ -25,7 +27,8 @@ public class Model {
 	private Model() {
 		loadDummyData();
 	}
-
+	
+	private static List<ClientThread> clientThreads;
 	private List<Auction> currentAuctions = new ArrayList<Auction>();
 	private int uniqueIdCounter = 1;
 	
@@ -40,14 +43,26 @@ public class Model {
 		users.add(new User("tim", "planken"));
 		
 		try {
-			addAuction("bicicle", 0.0, 1414959852L);
-			addAuction("candy bar", 20.0, 1414959852L);
+			addAuction("bicicle", 0.0, 1414967400000L);
+			addAuction("candy bar", 20.0, 1414967400000L);
 		} catch (AllreadyExistsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	public void addClientThread(ClientThread ct){
+		clientThreads.add(ct);
+	}
+	
+	public void removeClientThread(ClientThread ct){
+		clientThreads.remove(ct);
+	}
+	
+	public List<ClientThread> getClientThreads(){
+		return clientThreads;
+	}
+	
 	/**
 	 * This method is used to check if the username and password is valid
 	 * @param username
@@ -136,6 +151,7 @@ public class Model {
 			if(auction.getId() == auctionId){
 				if(bid > auction.getHighestBid()){
 					auction.setHighestBid(bid, accesstoken);
+					return true;
 				}else{
 					throw new BidTooLowException();
 				}
@@ -157,5 +173,25 @@ public class Model {
 	 */
 	public List<Auction> getCurrentAuctions(){
 		return currentAuctions;
+	}
+	
+	public Auction getAuctionById(int auctionId){
+		for (Auction auction : currentAuctions) {
+			if(auction.getId() == auctionId){
+				return auction;
+			}
+		}
+		
+		return null;
+	}
+	
+	public User getUserByAccessToken(String accesstoken){
+		for (User user : users) {
+			if(null != user.getAccesstoken() && user.getAccesstoken().equals(accesstoken)){
+				return user;
+			}
+		}
+		
+		return null;
 	}
 }

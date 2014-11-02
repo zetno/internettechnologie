@@ -12,6 +12,7 @@ import nl.saxion.controller.exceptions.ForbiddenException;
 import nl.saxion.model.Auction;
 import nl.saxion.model.Message;
 import nl.saxion.model.Model;
+import nl.saxion.model.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 public class ClientThread extends Thread {
 	private Socket clientSocket;
 	private Model model;
+	private User userOnThread;
 
 	/**
 	 * A new connection has been established
@@ -48,6 +50,7 @@ public class ClientThread extends Thread {
 				
 				//connection has been quit
 				if(null == message){
+					Model.getInstance().removeClientThread(this);
 					return;
 				}
 				
@@ -89,6 +92,7 @@ public class ClientThread extends Thread {
 			String token = model.authorizeUser(username, password);
 			
 			if (!token.isEmpty() && token != "") {
+				userOnThread = model.getUserByAccessToken(token);
 				sendAccessToken(token);
 			} else {
 				throw new BadInputException();
@@ -139,7 +143,7 @@ public class ClientThread extends Thread {
 		int auctionId = json.getInt("auctionsID");
 		
 		if (token != null && token != "" && !token.isEmpty() && model.isValidAccessToken(token)) {
-			if( bid >= 0 && auctionId >= 0 && model.addBid(auctionId, bid, token)){
+			if( bid >= 0 && auctionId >= 0 && System.currentTimeMillis() <= model.getAuctionById(auctionId).getEndTime() && model.addBid(auctionId, bid, token)){
 				sendResponseMessage(100);
 			}else{
 				throw new BadInputException();
@@ -160,12 +164,14 @@ public class ClientThread extends Thread {
 		
 		JSONArray jsonAuctions = new JSONArray();
 		for (Auction auction : model.getCurrentAuctions()) {
-			JSONObject jsonAuction = new JSONObject();
-			jsonAuction.put("auctionid", auction.getId());
-			jsonAuction.put("name", auction.getName());	 
-			jsonAuction.put("endtime", auction.getEndTime());	
-			jsonAuction.put("highestbid", auction.getHighestBid());	
-			jsonAuctions.put(jsonAuction);               
+			if(!auction.hasEnded()){
+				JSONObject jsonAuction = new JSONObject();
+				jsonAuction.put("auctionid", auction.getId());
+				jsonAuction.put("name", auction.getName());	 
+				jsonAuction.put("endtime", auction.getEndTime());	
+				jsonAuction.put("highestbid", auction.getHighestBid());	
+				jsonAuctions.put(jsonAuction);           
+			}
 		}                                                
 		jsonMessage.put("message", jsonAuctions);        
 		System.out.println(jsonMessage.toString());
@@ -221,6 +227,27 @@ public class ClientThread extends Thread {
 			PrintWriter p = new PrintWriter(ops, true);
 			p.println(json);
 		} catch (IOException e) {
+			System.out.println("internal server error: SendErrorMessage");
+		}
+	}
+	
+	public User getUserOnThread(){
+		return userOnThread;
+	}
+	
+	public void sendClientWonAuction(Auction auction){
+		try {
+			JSONObject jsonPostWinner = new JSONObject();
+			jsonPostWinner.put("action", "postwinner");
+
+			JSONObject jsonPostWinnerMessage = new JSONObject();
+			jsonPostWinnerMessage.put("itemname", auction.getName());
+			jsonPostWinnerMessage.put("price", auction.getHighestBid());
+			
+			jsonPostWinner.put("message", jsonPostWinnerMessage);
+
+			sendToClient(jsonPostWinner.toString());
+		} catch (JSONException e) {
 			System.out.println("internal server error: SendErrorMessage");
 		}
 	}

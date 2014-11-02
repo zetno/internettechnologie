@@ -9,6 +9,8 @@ public class Auction {
 	private double highestBid;
 	private String accessTokenHighestBid;
 	
+	private boolean hasEnded = false;
+	
 	/**
 	 * @param id
 	 * @param name
@@ -49,7 +51,19 @@ public class Auction {
 		this.accessTokenHighestBid = accessToken;
 	}
 	
+	public String getAccessTokenHighestBid(){
+		return accessTokenHighestBid;
+	}
+	
 	public long getEndTime() {
 		return endTime;
+	}
+	
+	public void setHasEnded(){
+		hasEnded = true;
+	}
+	
+	public boolean hasEnded(){
+		return hasEnded;
 	}
 }

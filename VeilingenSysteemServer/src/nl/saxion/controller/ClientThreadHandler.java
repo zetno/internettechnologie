@@ -91,6 +91,6 @@ public class ClientThreadHandler {
 	 * @return
 	 */
 	public static long createEpochDate(int hours){
-		return System.currentTimeMillis() + 3600L * (long) hours;
+		return System.currentTimeMillis() + 3600000L * (long) hours;
 	}
 }

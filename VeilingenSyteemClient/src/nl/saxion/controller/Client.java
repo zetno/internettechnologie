@@ -59,6 +59,14 @@ public class Client {
 		}
 		boolean end = true;
 		
+		//print winnings if we did win any
+		for (String s : Model.getInstance().getWinnings()) {
+			System.out.println(s);
+		}
+		
+		Model.getInstance().clearWinnings();
+		
+		//print menu
 		System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
 		System.out.println("Your choice: ");
 		
@@ -71,14 +79,14 @@ public class Client {
 				JSONObject makeAuction = new JSONObject();
 				makeAuction.put("action", "postnewbid");
 				
-				System.out.println("You choose make auction.");
+				System.out.println("You choose to make an auction.");
 				System.out.println("What do you want to offer?");
 				String thing = vraagString();
 				
 				System.out.println("What is the minimun price?");
 				double price = vraagDouble();
 				
-				System.out.println("how many hours do you want to act your offer?");
+				System.out.println("how many hours do you want your auction to last?");
 				int time = vraagNummer();
 				
 				JSONObject makeMsg = new JSONObject();
@@ -89,10 +97,7 @@ public class Client {
 				makeAuction.put("message", makeMsg);
 				ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());
 				citMakeAuction.start();
-				System.out.println(thing + " is added to Veiling.nl");
-				
-//				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
-//				System.out.println("Your choice: ");
+				System.out.println(thing + " is added to VeilingenSysteem");
 				return;
 				
 			case "2":
@@ -102,7 +107,6 @@ public class Client {
 				ClientSendThread citGetAuction = new ClientSendThread(socket, getauctions.toString());
 				citGetAuction.start();
 				return;
-
 			case "3":
 				JSONObject postBid = new JSONObject();
 				postBid.put("action", "postbid");
@@ -121,10 +125,7 @@ public class Client {
 
 				ClientSendThread citPostBid = new ClientSendThread(socket,postBid.toString());
 				citPostBid.start();
-				System.out.println("Your bid is sended.");
-				
-//				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
-//				System.out.println("Your choice: ");
+				System.out.println("Your bid is send.");
 				return;
 			case  "4":
 				end = false;
@@ -133,7 +134,6 @@ public class Client {
 				try {
 					socket.close();
 				} catch (IOException e) {
-//					e.printStackTrace();
 				}
 				break;
 			default:
@@ -183,7 +183,7 @@ public class Client {
 		}
 		return ingevoerdeString;
 	}
-	
+		
 	/**
 	 * Deze methode vraagt de gebruiker om een double in te voeren. Als hij een lege
 	 * String invoert volgt de vraag opnieuw.
