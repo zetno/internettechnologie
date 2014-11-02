@@ -88,7 +88,7 @@ public class Model {
 						System.out.println("Auction ID: "+auctionid);
 						String name = messageContent.getJSONObject(i).getString("name");
 						System.out.println("Item name: "+name);
-						int endtime = messageContent.getJSONObject(i).getInt("endtime");
+						long endtime = messageContent.getJSONObject(i).getLong("endtime");
 						System.out.println("End time: "+endtime);
 						double highestbid = messageContent.getJSONObject(i).getDouble("highestbid");
 						System.out.println("highest bid: "+highestbid + "\n------------");
