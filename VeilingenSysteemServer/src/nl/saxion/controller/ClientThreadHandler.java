@@ -44,7 +44,7 @@ public class ClientThreadHandler {
 	 * @throws BadInputException
 	 */
 	private static Message parseJson(String json) throws JSONException, BadInputException {
-		if (!json.isEmpty() && isJSONValid(json)) {
+		if (json != null && !json.isEmpty() && isJSONValid(json)) {
 			JSONObject jsonMessage = new JSONObject(json);
 			String action = jsonMessage.getString("action");
 			

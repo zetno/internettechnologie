@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import nl.saxion.controller.Client;
 import nl.saxion.controller.ClientReceiveThread;
 import nl.saxion.controller.ClientSendThread;
 
@@ -29,12 +30,16 @@ public class Model {
 
 	public String getToken() {
 		return token;
+
 	}
 
-	public void userLoggedIn(String username, String password,
-			String accesstoken) {
+	
+	
+	public void userLoggedIn(String username, String password, String accesstoken) throws JSONException{
+
 		user = new User(username, password);
 		user.setAccesstoken(accesstoken);
+		Client.program();
 	}
 
 	public String getUsername() {
@@ -79,10 +84,11 @@ public class Model {
 				String action = jsonMessage.getString("action");
 
 				if (action.equals("accesstoken")) {
-					token = jsonMessage.getJSONObject("message").getString(
-							"token");
-					String username = Model.getInstance().getUsername();
-					String password = Model.getInstance().getPassword();
+
+					token = jsonMessage.getJSONObject("message").getString("token");
+					String username = getUsername();
+					String password = getPassword();
+
 					userLoggedIn(username, password, token);
 
 				} else if (action.equals("response")) {
@@ -92,6 +98,9 @@ public class Model {
 						System.out.println("You are logged in as user");
 					} else if (response == 200) {
 						System.out.println("Wrong username or password.");
+						if(user == null){
+							Client.logIn();
+						}
 					} else if (response == 202) {
 						System.out.println("First log in");
 					} else if (response == 204) {
@@ -120,6 +129,8 @@ public class Model {
 						System.out.println("highest bid: " + highestbid
 								+ "\n------------");
 					}
+					
+					Client.continueProgram();
 
 				} else if (action.equals("postwinner")) {
 					String itemName = jsonMessage.getJSONObject("message")
@@ -137,43 +148,8 @@ public class Model {
 		}
 	}
 
-	private boolean checkToken() {
-		if (token != null) {
-			return true;
-		}
-		return false;
-	}
-
-	public void login() throws JSONException, UnknownHostException, IOException {
-		Scanner scan = new Scanner(System.in);
-		while (!checkToken()) {
-			String username = "";
-			String password = "";
-
-			System.out.println("Type in your username:");
-			username = scan.nextLine();
-			System.out.println("Type in your password:");
-			password = scan.nextLine();
-
-			JSONObject authorize = new JSONObject();
-			authorize.put("action", "authorize");
-
-			JSONObject msg = new JSONObject();
-			msg.put("username", username);
-			msg.put("password", password);
-			authorize.put("message", msg);
-
-			setUsername(username);
-			setPassword(password);
-
-			Socket socket = new Socket("localhost", 8081);
-			ClientSendThread cstAuthorize = new ClientSendThread(socket,
-					authorize.toString());
-			cstAuthorize.start();
-			ClientReceiveThread crt = new ClientReceiveThread(socket);
-			crt.start();
-
-		}
+ public void resetLoggedInUser(){
+		user = null;
 	}
 
 }

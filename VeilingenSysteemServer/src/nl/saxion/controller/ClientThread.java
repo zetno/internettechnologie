@@ -106,6 +106,7 @@ public class ClientThread extends Thread {
 		long endTime = ClientThreadHandler.createEpochDate(json.getInt("endhours"));
 		double minBid = json.getDouble("mininumbid");
 
+		System.out.println("token:= " + token);
 		if (token != null && token != "" && !token.isEmpty() && model.isValidAccessToken(token)) {
 			if(!name.isEmpty() && minBid >= 0 && endTime > 0){
 				model.addAuction(name, minBid, endTime);

@@ -18,17 +18,13 @@ public class ClientReceiveThread extends Thread {
 	public void run() {
 		while (true) {
 			try {
-
 				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String message = in.readLine();
+				System.out.println("received: "+ message);
 				Model.getInstance().parseAction(message);
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
-	
-
 }
