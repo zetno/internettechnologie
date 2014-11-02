@@ -32,6 +32,7 @@ public class Server {
 		try {
 			serverSocket = new ServerSocket(8081);
 			
+			//Keep checking for new clients connecting
 			while (true) {
 				System.out.println("Server is waiting for client...");
 				Socket clientSocket = serverSocket.accept();
@@ -44,7 +45,7 @@ public class Server {
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 }

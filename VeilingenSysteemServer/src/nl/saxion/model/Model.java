@@ -6,6 +6,11 @@ import java.util.List;
 import nl.saxion.controller.exceptions.AllreadyExistsException;
 import nl.saxion.controller.exceptions.BidTooLowException;
 
+/**
+ * The singleton Model containing the current users and auctions
+ * @author eelcokruders
+ *
+ */
 public class Model {
 	private static Model model;
 
@@ -26,6 +31,9 @@ public class Model {
 	
 	private List<User> users = new ArrayList<User>();
 
+	/**
+	 * Used to fill the model with dummy data
+	 */
 	private void loadDummyData() {
 		users.add(new User("bob", "wachtwoord"));
 		users.add(new User("rendy", "1234"));
@@ -40,6 +48,12 @@ public class Model {
 		}
 	}
 
+	/**
+	 * This method is used to check if the username and password is valid
+	 * @param username
+	 * @param password
+	 * @return an accesstoken
+	 */
 	public String authorizeUser(String username, String password) {
 		String token = "";
 
@@ -53,6 +67,10 @@ public class Model {
 		return token;
 	}
 
+	/**
+	 * this method generates a new unique accesstoken
+	 * @return
+	 */
 	public String generateAccessToken() {
 		String token = "";
 
@@ -71,6 +89,11 @@ public class Model {
 		return token;
 	}
 	
+	/**
+	 * This method checks if the accesstoken is valid and active
+	 * @param token
+	 * @return
+	 */
 	public boolean isValidAccessToken(String token){
 		for (User user : users) {
 			if(user.getAccesstoken().equals(token)){
@@ -81,6 +104,13 @@ public class Model {
 		return false;
 	}
 	
+	/**
+	 * this method adds an auction
+	 * @param name
+	 * @param minBid
+	 * @param endTime
+	 * @throws AllreadyExistsException
+	 */
 	public void addAuction(String name, double minBid, long endTime) throws AllreadyExistsException {
 		//Check if the auction allready exists
 		for (Auction auction : currentAuctions) {
@@ -93,6 +123,14 @@ public class Model {
 		currentAuctions.add(new Auction( generateUniqueAuctionId(), name, minBid, endTime));
 	}
 	
+	/**
+	 * this method adds an bid to a running auction
+	 * @param auctionId
+	 * @param bid
+	 * @param accesstoken
+	 * @return
+	 * @throws BidTooLowException
+	 */
 	public boolean addBid(int auctionId, double bid, String accesstoken) throws BidTooLowException{
 		for (Auction auction : currentAuctions) {
 			if(auction.getId() == auctionId){
@@ -107,10 +145,16 @@ public class Model {
 		return false;
 	}
 	
+	/**
+	 * @return a new unique auction id
+	 */
 	public int generateUniqueAuctionId(){
 		return uniqueIdCounter++;
 	}
 	
+	/**
+	 * @return a list of current running auctions
+	 */
 	public List<Auction> getCurrentAuctions(){
 		return currentAuctions;
 	}

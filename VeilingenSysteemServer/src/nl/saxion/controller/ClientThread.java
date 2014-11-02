@@ -17,18 +17,31 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author eelcokruders
+ *
+ */
 public class ClientThread extends Thread {
 	private Socket clientSocket;
 	private Model model;
 
+	/**
+	 * A new connection has been established
+	 * @param clientSocket
+	 */
 	public ClientThread(Socket clientSocket) {
 		this.clientSocket = clientSocket;
 		this.model = Model.getInstance();
 		System.out.println("A new connection with a client has been made!");
 	}
 
+	/**
+	 * Run is called once a connection has been made.
+	 * This method keeps looping for incoming messages and directs them 
+	 * towards an action to be activated.
+	 */
 	public void run() {
-		//wait for incoming message
 		while (true) {
 			try {
 				Message message = ClientThreadHandler.messageToAction(clientSocket);
@@ -56,7 +69,13 @@ public class ClientThread extends Thread {
 		}
 	}
 
-	
+	/**
+	 * This method checks if the username and valid is valid.
+	 * an new unique accesstoken is send back to the client.
+	 * @param json
+	 * @throws BadInputException
+	 * @throws JSONException
+	 */
 	private void authorize(JSONObject json) throws BadInputException, JSONException {
 		String username = json.getString("username");
 		String password = json.getString("password");
@@ -73,6 +92,14 @@ public class ClientThread extends Thread {
 		}
 	}
 	
+	/**
+	 * This method creates an auctions
+	 * @param json
+	 * @throws BadInputException
+	 * @throws ForbiddenException
+	 * @throws JSONException
+	 * @throws AllreadyExistsException
+	 */
 	private void createAuction(JSONObject json) throws BadInputException, ForbiddenException, JSONException, AllreadyExistsException{
 		String token = json.getString("accesstoken");
 		String name = json.getString("itemname");
@@ -91,6 +118,14 @@ public class ClientThread extends Thread {
 		}
 	}
 	
+	/**
+	 * This method adds a bid to a running auction
+	 * @param json
+	 * @throws JSONException
+	 * @throws ForbiddenException
+	 * @throws BadInputException
+	 * @throws BidTooLowException
+	 */
 	private void addBid(JSONObject json) throws JSONException, ForbiddenException, BadInputException, BidTooLowException{
 		String token = json.getString("accesstoken");
 		double bid = json.getDouble("bid");
@@ -107,6 +142,10 @@ public class ClientThread extends Thread {
 		}
 	}
 
+	/**
+	 * this method sends all current running auctions to the client
+	 * @throws JSONException
+	 */
 	private void sendCurrentAuctions() throws JSONException{
 		System.out.println("sendcurrentauctions");
 		JSONObject jsonMessage = new JSONObject();
@@ -126,6 +165,11 @@ public class ClientThread extends Thread {
 		sendToClient(jsonMessage.toString());
 	}
 	
+	/**
+	 * this method sends the accesstoken to the client
+	 * @param token
+	 * @throws JSONException
+	 */
 	private void sendAccessToken(String token) throws JSONException {
 		JSONObject jsonAccessToken = new JSONObject();
 		jsonAccessToken.put("action", "accesstoken");
@@ -139,6 +183,10 @@ public class ClientThread extends Thread {
 		System.out.println("A new accesstoken has been logged: " + token);
 	}
 	
+	/**
+	 * This method sends a response message with status code to the client
+	 * @param statuscode
+	 */
 	private void sendResponseMessage(int statuscode) {
 		System.out.println("a response was requested! code: " + statuscode);
 		try {
@@ -156,6 +204,10 @@ public class ClientThread extends Thread {
 		}
 	}
 
+	/**
+	 * this method sends json to the client
+	 * @param json
+	 */
 	private void sendToClient(String json) {
 		try {
 			OutputStream ops = clientSocket.getOutputStream();
