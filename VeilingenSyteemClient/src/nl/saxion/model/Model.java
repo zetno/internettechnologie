@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import nl.saxion.controller.Client;
 import nl.saxion.controller.ClientReceiveThread;
 import nl.saxion.controller.ClientSendThread;
 
@@ -32,9 +33,10 @@ public class Model {
 		return token;
 	} 
 	
-	public void userLoggedIn(String username, String password, String accesstoken){
+	public void userLoggedIn(String username, String password, String accesstoken) throws JSONException{
 		user = new User(username, password);
 		user.setAccesstoken(accesstoken);
+		Client.program();
 	}
 	public String getUsername() {
 		return username;
@@ -70,10 +72,9 @@ public class Model {
 
 				if (action.equals("accesstoken")) {
 					token = jsonMessage.getJSONObject("message").getString("token");
-					String username = Model.getInstance().getUsername();
-					String password = Model.getInstance().getPassword();
+					String username = getUsername();
+					String password = getPassword();
 					userLoggedIn(username, password, token);
-					
 
 				} else if (action.equals("response")) {
 					int response = jsonMessage.getJSONObject("message").getInt("status_code");
@@ -81,6 +82,9 @@ public class Model {
 						System.out.println("You are logged in as user");
 					} else if (response == 200) {
 						System.out.println("Wrong username or password.");
+						if(user == null){
+							Client.logIn();
+						}
 					} else if (response == 202) {
 						System.out.println("First log in");
 					} else if (response == 204) {
@@ -103,6 +107,8 @@ public class Model {
 						double highestbid = messageContent.getJSONObject(i).getDouble("highestbid");
 						System.out.println("highest bid: "+highestbid + "\n------------");
 					}
+					
+					Client.continueProgram();
 
 				}else if(action.equals("postwinner")){
 					String itemName = jsonMessage.getJSONObject("message").getString("itemname");
@@ -155,4 +161,7 @@ public class Model {
 		}
 	}
 	
+	public void resetLoggedInUser(){
+		user = null;
+	}
 }

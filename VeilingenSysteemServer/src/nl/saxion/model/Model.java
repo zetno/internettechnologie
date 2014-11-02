@@ -96,7 +96,7 @@ public class Model {
 	 */
 	public boolean isValidAccessToken(String token){
 		for (User user : users) {
-			if(user.getAccesstoken().equals(token)){
+			if(null != user.getAccesstoken() && user.getAccesstoken().equals(token)){
 				return true;
 			}
 		}

@@ -11,9 +11,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Client {
+	private static Socket socket;
+	private static boolean isProgramRunning = false;
 	
 	public static void main(String[] args) throws JSONException {
 		
+		try{
+			socket = new Socket("localhost", 8081);
+			ClientReceiveThread crt = new ClientReceiveThread(socket);
+			crt.start();
+		
+			logIn();
+		} catch (UnknownHostException e) {
+			System.out.println("can't find the server.");
+		} catch (IOException e) {
+			System.out.println("failed to connect with server.");
+		}
+	}
+	
+	public static void logIn() throws JSONException{
 		String username = "";
 		String password = "";
 		
@@ -33,96 +49,93 @@ public class Client {
 		Model.getInstance().setUsername(username);
 		Model.getInstance().setPassword(password);
 		
+		ClientSendThread cstAuthorize = new ClientSendThread(socket,authorize.toString());
+		cstAuthorize.start();
+	}
+	
+	public static void program() throws JSONException{
+		if(isProgramRunning == false){
+			isProgramRunning = true;
+		}
+		boolean end = true;
 		
-		try{
-			Socket socket = new Socket("localhost", 8081);
-			ClientReceiveThread crt = new ClientReceiveThread(socket);
-			crt.start();
-			
-			ClientSendThread cstAuthorize = new ClientSendThread(socket,authorize.toString());
-			cstAuthorize.start();
+		System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
+		System.out.println("Your choice: ");
 		
-			boolean hasToken = Model.getInstance().hasToken();
-			boolean end = true;
+		String input = "";
+		while (end) {
 			
-			String input = "";
-			while (!hasToken && end) {
+			input = vraagString();
+			switch (input) {
+			case "1":
+				JSONObject makeAuction = new JSONObject();
+				makeAuction.put("action", "postnewbid");
+				
+				System.out.println("You choose make auction.");
+				System.out.println("What do you want to offer?");
+				String thing = vraagString();
+				
+				System.out.println("What is the minimun price?");
+				double price = vraagDouble();
+				
+				System.out.println("how many hours do you want to act your offer?");
+				int time = vraagNummer();
+				
+				JSONObject makeMsg = new JSONObject();
+				makeMsg.put("accesstoken", Model.getInstance().getToken());
+				makeMsg.put("itemname", thing);
+				makeMsg.put("mininumbid", price);
+				makeMsg.put("endhours", time);
+				makeAuction.put("message", makeMsg);
+				ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());
+				citMakeAuction.start();
+				System.out.println(thing + " is added to Veiling.nl");
+				
 				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
 				System.out.println("Your choice: ");
-					input = vraagString();
-				switch (input) {
-				case "1":
-					JSONObject makeAuction = new JSONObject();
-					makeAuction.put("action", "postnewbid");
-					
-					System.out.println("You choose make auction.");
-					System.out.println("What do you want to offer?");
-					String thing = vraagString();
-					
-					System.out.println("What is the minimun price?");
-					double price = vraagDouble();
-					
-					System.out.println("how many hours do you want to act your offer?");
-					int time = vraagNummer();
-					
-					JSONObject makeMsg = new JSONObject();
-					makeMsg.put("accesstoken", Model.getInstance().getToken());
-					makeMsg.put("itemname", thing);
-					makeMsg.put("mininumbid", price);
-					makeMsg.put("endhours", time);
-					makeAuction.put("message", makeMsg);
-					ClientSendThread citMakeAuction = new ClientSendThread(socket, makeAuction.toString());
-					citMakeAuction.start();
-					System.out.println(thing + " is added to Veiling.nl");
-					break;
-					
-				case "2":
-					JSONObject getauctions = new JSONObject();
-					getauctions.put("action", "getauctions");
-					getauctions.put("message", "null");
-					ClientSendThread citGetAuction = new ClientSendThread(socket, getauctions.toString());
-					citGetAuction.start();
+				break;
 				
-					break;
+			case "2":
+				JSONObject getauctions = new JSONObject();
+				getauctions.put("action", "getauctions");
+				getauctions.put("message", "null");
+				ClientSendThread citGetAuction = new ClientSendThread(socket, getauctions.toString());
+				citGetAuction.start();
+				return;
 
-				case "3":
-					JSONObject postBid = new JSONObject();
-					postBid.put("action", "postbid");
-					System.out.println("Bid");
-					System.out.println("Which case do you want to bid?\nEnter auction Id:");
-					String nameOfThing = vraagString();
-					System.out.println("How much money do you want to offer?");
-					double priceOfThing = vraagDouble();
+			case "3":
+				JSONObject postBid = new JSONObject();
+				postBid.put("action", "postbid");
+				System.out.println("Bid");
+				System.out.println("Which case do you want to bid?\nEnter auction Id:");
+				String nameOfThing = vraagString();
+				System.out.println("How much money do you want to offer?");
+				double priceOfThing = vraagDouble();
 
-					JSONObject bidMsg = new JSONObject();
-					bidMsg.put("accesstoken", Model.getInstance().getToken());
-					bidMsg.put("bid", priceOfThing);
-					bidMsg.put("auctionsID", nameOfThing);
+				JSONObject bidMsg = new JSONObject();
+				bidMsg.put("accesstoken", Model.getInstance().getToken());
+				bidMsg.put("bid", priceOfThing);
+				bidMsg.put("auctionsID", nameOfThing);
 
-					postBid.put("message", bidMsg);
+				postBid.put("message", bidMsg);
 
-					ClientSendThread citPostBid = new ClientSendThread(socket,postBid.toString());
-					citPostBid.start();
-					System.out.println("Your bid is sended.");
-					break;
-				case  "4":
-					end= false;
-					System.out.println("Goodbye");
-					break;
-				default:
-						System.out.println("Please choose a valid number.");
-					
-					break;
-				}
+				ClientSendThread citPostBid = new ClientSendThread(socket,postBid.toString());
+				citPostBid.start();
+				System.out.println("Your bid is sended.");
+				
+				System.out.println("Choose your action:\n1. Make auction\n2. All auction\n3. Bid\n4. exit ");
+				System.out.println("Your choice: ");
+				break;
+			case  "4":
+				end = false;
+				Model.getInstance().resetLoggedInUser();
+				System.out.println("Goodbye");
+				break;
+			default:
+					System.out.println("Please choose a valid number.");
+				break;
 			}
-		} catch (UnknownHostException e) {
-			System.out.println("can't find the server.");
-		} catch (IOException e) {
-			System.out.println("failed to connect with server.");
-		}finally{
-		
 		}
-	
 	}
 	
 	/**
@@ -208,4 +221,13 @@ public class Client {
 		return ingevoerdNummer;
 	}
 	
+	public static void continueProgram(){
+		isProgramRunning = false;
+		try {
+			program();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
