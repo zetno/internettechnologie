@@ -75,7 +75,7 @@ public class Model {
 		return false;
 	}
 	
-	public void addAuction(String name, double minBid, int endTime) throws AllreadyExistsException {
+	public void addAuction(String name, double minBid, long endTime) throws AllreadyExistsException {
 		//Check if the auction allready exists
 		for (Auction auction : currentAuctions) {
 			if(auction.getName().equals(name)){
@@ -85,6 +85,16 @@ public class Model {
 		
 		//add auction
 		currentAuctions.add(new Auction( generateUniqueAuctionId(), name, minBid, endTime));
+	}
+	
+	public boolean addBid(int auctionId, double bid){
+		for (Auction auction : currentAuctions) {
+			if(auction.getId() == auctionId){
+				
+			}
+		}
+		
+		return false;
 	}
 	
 	public int generateUniqueAuctionId(){

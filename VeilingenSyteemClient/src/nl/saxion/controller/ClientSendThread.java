@@ -17,9 +17,6 @@ public class ClientSendThread extends Thread{
 	
 	@Override
 	public void run(){
-
-			Scanner sc = new Scanner(System.in);
-			
 			try {
 				 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 				 out.println(json);
@@ -27,7 +24,5 @@ public class ClientSendThread extends Thread{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-				   
-		
 	}
 }

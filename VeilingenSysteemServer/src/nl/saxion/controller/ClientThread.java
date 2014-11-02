@@ -36,7 +36,7 @@ public class ClientThread extends Thread {
 					case "authorize": authorize(message.getJSONObjectMessage()); break;
 					case "postnewbid": createAuction(message.getJSONObjectMessage());break;
 					case "getauctions": sendCurrentAuctions(); break;
-					case "postbid": /*TODO: add bid to auction */; break;
+					case "postbid": addBid(message.getJSONObjectMessage()); break;
 					default : sendResponseMessage(203); break;
 				}
 			} catch (BadInputException bie){
@@ -71,19 +71,30 @@ public class ClientThread extends Thread {
 	}
 	
 	private void createAuction(JSONObject json) throws BadInputException, ForbiddenException, JSONException, AllreadyExistsException{
-		ClientThreadHandler.createEpochDate(2);
-		System.out.println("add auction, check if incorrect input");
 		String token = json.getString("accesstoken");
 		String name = json.getString("itemname");
-		int endHours = json.getInt("enddate");
-		double minBid = json.getDouble("minimumbid");
-		System.out.println("add auction, check if incorrect21 input");
+		long endTime = ClientThreadHandler.createEpochDate(json.getInt("endhours"));
+		double minBid = json.getDouble("mininumbid");
+
+		if (!token.isEmpty() && model.isValidAccessToken(token)) {
+			if(!name.isEmpty() && minBid >= 0 && endTime > 0){
+				model.addAuction(name, minBid, endTime);
+				sendResponseMessage(100);
+			}else{
+				throw new BadInputException();
+			}
+		} else {
+			throw new ForbiddenException();
+		}
+	}
+	
+	private void addBid(JSONObject json) throws JSONException, ForbiddenException, BadInputException{
+		String token = json.getString("accesstoken");
+		double bid = json.getDouble("bid");
+		int auctionId = json.getInt("auctionsID");
 		
 		if (!token.isEmpty() && model.isValidAccessToken(token)) {
-			if(!name.isEmpty() && minBid >= 0 && endHours > 0){
-				System.out.println("add auction");
-				//TODO: make epoch time  and add endhours
-				model.addAuction(name, minBid, endHours);
+			if( bid >= 0 && auctionId >= 0 && model.addBid(auctionId, bid)){
 				sendResponseMessage(100);
 			}else{
 				throw new BadInputException();
@@ -102,12 +113,12 @@ public class ClientThread extends Thread {
 		for (Auction auction : model.getCurrentAuctions()) {
 			JSONObject jsonAuction = new JSONObject();
 			jsonAuction.put("auctionid", auction.getId());
-			jsonAuction.put("name", auction.getName());	
+			jsonAuction.put("name", auction.getName());	 
 			jsonAuction.put("endtime", auction.getEndTime());	
 			jsonAuction.put("highestbid", auction.getHighestBid());	
-			jsonAuctions.put(jsonAuction);
-		}
-		jsonMessage.put("message", jsonAuctions);
+			jsonAuctions.put(jsonAuction);               
+		}                                                
+		jsonMessage.put("message", jsonAuctions);        
 		System.out.println(jsonMessage.toString());
 		sendToClient(jsonMessage.toString());
 	}
@@ -126,6 +137,7 @@ public class ClientThread extends Thread {
 	}
 	
 	private void sendResponseMessage(int statuscode) {
+		System.out.println("a response was requested! code: " + statuscode);
 		try {
 			JSONObject jsonResponseMessage = new JSONObject();
 			jsonResponseMessage.put("action", "response");

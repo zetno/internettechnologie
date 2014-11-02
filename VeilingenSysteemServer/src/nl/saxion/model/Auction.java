@@ -5,23 +5,25 @@ public class Auction {
 	private String name;
 	private double highestBid;
 	private double minPrice;
-	private int endTime; //in epoch
+	private long endTime; //in epoch
 	
 	/**
 	 * @param id
 	 * @param name
 	 * @param highestBid
 	 */
-	public Auction(int id, String name, double highestBid, int endTime) {
+	public Auction(int id, String name, double highestBid, long endTime) {
 		this.id = id;
 		this.name = name;
 		this.highestBid = highestBid;
+		this.endTime = endTime;
 	}
 	
-	public Auction(int id, String name, double minPrice, double highestBid, int endTime) {
+	public Auction(int id, String name, double minPrice, double highestBid, long endTime) {
 		this.id = id;
 		this.name = name;
 		this.highestBid = highestBid;
+		this.endTime = endTime;
 	}
 	
 	public int getId() {
@@ -44,7 +46,7 @@ public class Auction {
 		this.highestBid = highestBid;
 	}
 	
-	public int getEndTime() {
+	public long getEndTime() {
 		return endTime;
 	}
 }
